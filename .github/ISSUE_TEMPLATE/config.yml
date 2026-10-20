@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Use the planner
+    url: https://savings-goal-calculator-9eo.pages.dev/
+    about: Try the maintained Cloudflare Pages instance.
+  - name: Security and privacy concerns
+    url: https://github.com/tombelieber/savings-goal-calculator/blob/main/SECURITY.md
+    about: Follow the private reporting instructions; do not post real financial data.

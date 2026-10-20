@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="zh-Hant-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7b0w5Z4cSivN1eE6zLGeVAQz5GvCdr55hFEn9z5fcLw=' 'sha256-dq0TOrqvJ4chDRtpWy+Q6PUQcmQ2LoF3RXk4xRxU99o=' 'sha256-lxFo4ZCKtWc9Rmqy5Dsfy78pGJaBulQ7uMhXXJqlnoA=' 'sha256-lTgtKHe9OehB0OyZ9RLfsVZkJ30VG+tHDTlC6yddOvs=' 'sha256-mkXlAZvJ61erTlORXGoakCXS3sSKWyenzzEkUyK1OFI=' 'sha256-LAQasw6+/Dr3zkAtl8nOCT28Jx/BCaw4FOJIonAwTJ8=' 'sha256-mahrTa0eHSoxcCkKAIzOZAdfdNN0K57gr41WEAYMQ+E=' 'sha256-Oj1UiYWuNOLDaOuwOXgyD3COoJudbANL/frTjpjuoHM=' 'sha256-129o0s4eqW1TznaxJhIMnvS5ewo4GOp8DGop/lw4ofg=' 'sha256-pIFAJmlYwzge54hsBZFxEUXMv6Ihn4IAvakgcRfbXuU=' 'sha256-NZis79g6+WuMNskcaT/Jdh82IpKxqZ7JBVq3/Xmf7r0=' 'sha256-pMRyqBxGcZL+p4BF7d0urxeTvleFs6etVUe2ArnPTPo=' 'sha256-sG7IajwYp57KB7KiEOdZAoqTpBCnC4yZRudEkFzNWsY=' 'sha256-HccY8ce6BJvepTTY0Wp/qybExPiz6kwChhB1qbchAo0=' 'sha256-/iBWFf6LT0bmQQs5o82fwEpgCTTY1hHzZ0QumX5QrR4=' 'sha256-uyus0FjbL4a773MkfUSPHN3fXs683qHTr98WB7v7iRk='; style-src 'unsafe-inline'; connect-src 'none'; worker-src 'self'; img-src 'self' data:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer"><meta name="description" content="存款目標計算器：睇清幾時儲到、仲差幾多。數字只存本機，毋須登入；用連結分享你的目標及設定。"><title>存款目標計算器｜我幾時儲到？</title>
+<style>:root{
+ color-scheme:light dark;
+ --paper:light-dark(#f7f4ee,#24231f);--surface:light-dark(#fffefa,#2c2b26);
+ --ink:light-dark(#2f302b,#f2eee5);--muted:light-dark(#6b6a63,#c0baaf);
+ --line:light-dark(#d9d3c9,#555149);--blue:light-dark(#a95136,#efb39d);
+ --soft:light-dark(#f6e9e2,#49332a);--field:light-dark(#fcf8f2,#34312b);
+ --error:light-dark(#a32f30,#ffb5af);--olive:light-dark(#64745b,#acbca1);
+ --gold:light-dark(#9a7437,#dfc186);--focus:light-dark(#a95136,#efb39d);
+}
+body[data-view=onboarding]>header,body[data-view=onboarding]>main,body[data-view=onboarding]>.live-dock{display:none}
+body[data-view=results] #inputs,body[data-view=results] .ledger{display:none}
+body[data-view=results] .layout{display:block;max-width:760px;margin:auto}
+.quickstart{min-height:100svh;padding:24px 24px 40px;display:flex;flex-direction:column}
+.quick-top{width:100%;max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}
+.quick-top>span{font-family:'Songti TC',Georgia,serif;font-size:18px}
+.quick-top button{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:12px;min-height:44px}
+.quick-shell{width:100%;max-width:510px;margin:auto;flex:1;display:flex;flex-direction:column;justify-content:center;padding:44px 0 20px}
+.quick-progress-row{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;margin-bottom:10px}
+#quick-progress{height:4px;margin-bottom:36px}#quick-title{font-size:clamp(27px,5vw,36px);outline:none}
+.quick-help{margin:12px 0 26px;font-size:14px;color:var(--muted);line-height:1.7;min-height:48px}
+.quickstart .money-head{display:block}.quickstart .money-head>label{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
+.quickstart .money-head input{font-size:clamp(32px,7vw,44px);font-weight:500;text-align:left;padding:12px 42px 12px 16px;border-radius:14px;min-height:76px}
+.quickstart .slider-line{margin-top:12px}.quickstart .range{height:48px}.quickstart .range-foot button{min-height:44px}
+.quick-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:18px}
+.quick-presets button{min-height:44px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:14px}
+.quick-presets button[aria-pressed=true]{border-color:var(--blue);background:var(--soft);color:var(--blue)}
+.quick-zero{margin-top:16px;min-height:44px;text-decoration:underline;text-underline-offset:4px;color:var(--blue);padding:8px 0;font-size:14px}
+.quick-actions{display:flex;align-items:center;gap:12px;margin-top:28px}.quick-actions>button{min-height:48px;padding:11px 20px;border-radius:12px;font-size:15px}
+#quick-next{margin-left:auto;min-width:150px}#quick-back{border:1px solid var(--line);background:var(--surface)}
+.quick-months-entry{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:14px}
+.quick-months-entry input{width:140px;min-height:70px;padding:10px 14px;font-size:36px;border:1px solid var(--line);border-radius:14px;background:var(--field);text-align:right}
+.quick-until{font-size:14px;color:var(--muted);margin:8px 0}.quick-privacy{font-size:11px;color:var(--muted);margin-top:26px;text-align:center}
+#quick-error:empty,#quick-detail-note:empty,#simple-plan-note:empty{display:none}#quick-error{margin-top:14px}
+nav #start-quick{padding:9px 13px;border:1px solid var(--line);border-radius:10px;min-height:44px;background:var(--surface)}
+@media(max-width:480px){.quickstart{padding:16px 20px 28px}.quick-shell{padding-top:36px;justify-content:flex-start}.quick-top>span{font-size:16px}.quick-top button{padding:8px 10px;font-size:11px}#quick-progress{margin-bottom:28px}.quick-help{margin-bottom:22px}.quick-actions{margin-top:24px}.quick-presets{gap:6px}nav #start-quick{padding:8px;font-size:12px}.topbar{gap:7px}.topbar>span{max-width:none;white-space:nowrap}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 'PingFang HK','Avenir Next',-apple-system,BlinkMacSystemFont,sans-serif}
+a{color:inherit;text-decoration:none}button,input,select{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0}button:disabled{opacity:.45;cursor:default}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+button,a,input,select{-webkit-tap-highlight-color:transparent}button,a,input{touch-action:manipulation}
+header{position:sticky;top:0;z-index:4;background:var(--paper);border-bottom:1px solid var(--line)}
+.topbar{max-width:1180px;margin:auto;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:12px}
+.topbar>span{color:var(--muted)}nav{display:flex;gap:5px}nav a{padding:9px 13px;min-height:44px;border-radius:10px;display:inline-flex;align-items:center}nav a{border:1px solid var(--line);background:var(--surface)}nav a:hover{background:var(--soft);color:var(--blue)}
+main{max-width:1180px;margin:auto;padding:32px 28px 150px}.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:start}.overview,#inputs{min-width:0}
+.slide{padding:20px;scroll-margin-top:0;background:var(--surface);border:1px solid var(--line);border-radius:22px}.slide+.slide{margin-top:16px}
+h1,h2,h3,p{margin:0}h1{font:500 36px/1.35 'Songti TC','Noto Serif TC',Georgia,serif;letter-spacing:.01em}h2{font-size:23px;line-height:1.4;letter-spacing:-.02em;font-weight:600}h3{font-size:16px;font-weight:600;line-height:1.55}
+.intro{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}.badge,.read-label{font-size:11px;color:var(--muted)}.read-label{display:inline-flex;align-items:center;gap:6px;margin-bottom:12px}.read-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--muted)}
+.quiet-actions{display:flex;gap:7px}.quiet-actions button{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:7px 10px;min-height:36px;font-size:11px}.quiet-actions button:hover{border-color:var(--blue);color:var(--blue)}
+.help,.baseline{font-size:12px;color:var(--muted);line-height:1.55;margin-top:6px}.label{font-size:12px;color:var(--muted)}.hero{margin:16px 0 12px}.hero-value{font-size:clamp(34px,4vw,48px);line-height:1.25;font-weight:600;letter-spacing:-.035em;font-variant-numeric:tabular-nums;margin:9px 0;overflow-wrap:anywhere;color:var(--ink)}.goal-line{font-size:13px;color:var(--muted)}
+.track{height:7px;background:var(--line);border-radius:10px;overflow:hidden}.track>span{display:block;height:100%;width:0;background:var(--blue)}.gap-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;font-size:13px}.gap-row strong{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-align:right}
+.eta-box{margin-top:14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0;display:flex;align-items:baseline;justify-content:space-between;gap:12px}.eta-box strong{font-size:22px;font-weight:600;text-align:right}.plan-summary{margin-top:14px;font-size:14px;line-height:1.8}
+.path-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}.path{border:1px solid var(--line);border-radius:14px;padding:11px 12px;text-align:left;min-width:0;background:var(--field)}.path:hover{border-color:var(--blue);background:var(--soft)}.path small{display:block;color:var(--muted);font-size:12px}.path strong{display:block;font-size:18px;font-weight:600;margin:5px 0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.path span{display:inline-flex;font-size:11px;color:var(--blue);font-weight:600}
+.limit{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.55}.error{color:var(--error);font-size:13px;margin-top:14px}.error:empty{display:none}
+.overview-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.action-primary,.action-secondary,.next,.text-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:550;text-align:center;line-height:1.5}
+.action-primary{background:var(--blue);color:var(--surface);border:1px solid var(--blue)}.action-secondary,.text-button{background:var(--surface);border:1px solid var(--line);color:var(--ink)}.action-primary:hover{filter:brightness(.94)}.action-secondary:hover,.text-button:hover{border-color:var(--blue);color:var(--blue);background:var(--soft)}
+.next{color:var(--blue);border:1px solid var(--line);margin-top:18px;background:var(--surface)}.text-button{margin:8px 0 0;color:var(--blue);border-style:dashed;gap:6px}.plan-link{display:flex;margin-top:16px;background:var(--blue);border-color:var(--blue);color:var(--surface);min-height:48px}
+.edit-guide{margin:12px 0 14px;padding:10px 12px;background:var(--field);border:1px solid var(--line);border-radius:12px;font-size:12px;line-height:1.8;color:var(--muted)}.edit-guide strong{color:var(--ink);font-weight:550}.edit-guide p+p{margin-top:5px}
+.currency-line{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:13px}.currency-line select{width:108px}
+.input-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);scroll-margin-top:90px}.input-section h3{margin-bottom:10px}
+.section-total,.mini-total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:var(--paper);border-radius:10px;padding:8px 10px;margin:0 0 12px;font-size:12px;color:var(--muted)}.section-total span,.mini-total span{flex:0 1 auto}.section-total output,.mini-total output{flex:0 0 auto;max-width:74%;min-width:0;color:var(--ink);font-size:18px;font-weight:600;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.auto-note{display:inline;font-size:10px;font-weight:400;margin-left:6px;color:var(--muted)}
+.money-control+.money-control{margin-top:12px}.money-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,53%);gap:12px;align-items:center}.money-head>label{font-size:13px;line-height:1.5}.money-head label small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.money-entry{position:relative;min-width:0}.money-head input{width:100%;min-width:0;background:var(--field);border:1px solid var(--line);border-radius:10px;text-align:right;padding:9px 31px 9px 10px;min-height:44px;font-size:19px;font-weight:550;line-height:1.35;font-variant-numeric:tabular-nums}.money-head input:hover{border-color:var(--blue)}.money-head input:focus{border-color:var(--blue);background:var(--surface)}.input-mark{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}.money-head input[aria-invalid=true]{border-color:var(--error)}
+input::placeholder{font-size:12px;color:var(--muted);font-weight:400}.money-control .help:empty{display:none}
+.range{display:block;appearance:none;-webkit-appearance:none;width:100%;min-width:0;height:44px;padding:0;border:0;background:transparent;cursor:ew-resize;touch-action:pan-y;accent-color:var(--blue);margin:0}.range::-webkit-slider-runnable-track{height:5px;border-radius:5px;background:var(--line)}.range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:24px;height:24px;border:4px solid var(--surface);border-radius:50%;margin-top:-9.5px;background:var(--blue);box-shadow:0 0 0 1px var(--blue)}.range::-moz-range-track{height:5px;border-radius:5px;background:var(--line)}.range::-moz-range-thumb{width:16px;height:16px;border:4px solid var(--surface);border-radius:50%;background:var(--blue);box-shadow:0 0 0 1px var(--blue)}.range:disabled{opacity:.35;cursor:default}
+.slider-line{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 52px;gap:8px;align-items:start;padding-bottom:12px}.slider-line .range{margin:0}.range-foot{display:contents}.range-foot span{position:absolute;left:0;bottom:0;color:var(--muted);font-size:10px;line-height:12px}.range-foot button{grid-column:2;grid-row:1;border:1px solid var(--line);border-radius:7px;font-size:10px;color:var(--muted);padding:5px 6px;min-height:40px;margin-top:2px;background:var(--surface)}.range-foot button:hover{border-color:var(--blue);color:var(--blue)}
+#bill-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px;margin-top:12px}#bill-controls .money-control{margin:0;min-width:0}#bill-controls .money-head{grid-template-columns:1fr;gap:5px}#bill-controls .money-head>label{min-height:26px;font-size:12px}#bill-controls .money-head label small{display:inline;font-size:10px;margin-left:4px}#bill-controls .money-head input{font-size:16px}#bill-controls .slider-line{grid-template-columns:minmax(0,1fr) 42px;gap:5px}#bill-controls .range-foot button{padding:5px 2px}#bill-controls .help{font-size:11px;line-height:1.45;overflow-wrap:anywhere}.income-head .name-label{font-size:10px;margin-bottom:3px}
+
+.goal-presets{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-top:8px}.goal-presets button{border:1px solid var(--line);border-radius:9px;min-height:44px;padding:7px 4px;font-size:12px;background:var(--surface)}.goal-presets button[aria-pressed=true]{background:var(--soft);border-color:var(--blue);color:var(--blue)}
+.dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}.date-field{min-width:0;display:flex;flex-direction:column;gap:5px}.date-field label{font-size:12px;color:var(--muted)}input[type=month],select{width:100%;min-width:0;border:1px solid var(--line);background:var(--field);border-radius:9px;padding:8px 9px;font-size:16px;min-height:44px}input[type=month]:hover,select:hover{border-color:var(--blue)}.horizon-head{display:flex;justify-content:space-between;gap:12px;font-size:13px}.horizon-head output{font-variant-numeric:tabular-nums;color:var(--ink)}
+.income-row,.oneoff{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}.income-head,.oneoff-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;font-size:12px}.income-name-field{flex:1;min-width:0}.name-label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.income-name{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;background:var(--field);padding:8px 10px;font-size:16px;min-height:44px}.income-name:hover{border-color:var(--blue)}.income-head button,.oneoff-head button{flex:0 0 auto;border:1px solid var(--line);border-radius:8px;font-size:11px;color:var(--muted);min-height:40px;padding:8px 11px;background:var(--surface)}.income-head button:hover,.oneoff-head button:hover{border-color:var(--error);color:var(--error)}
+.income-trial{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.trial-label{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}.oneoff-empty{font-size:13px;color:var(--muted)}.bonus-date,.frequency-line{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;font-size:12px;color:var(--muted)}.bonus-date input{width:164px}.frequency-line{margin:8px 0 10px}.frequency-line select{width:116px}.insurance-group{border-top:1px solid var(--line);padding-top:16px;margin-top:18px}.insurance-group h3{margin-bottom:10px}
+.chart-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px}.segmented{display:inline-flex;align-items:stretch;border:1px solid var(--line);background:var(--paper);border-radius:11px;padding:4px;gap:4px}.segmented button{border:1px solid transparent;font-size:12px;color:var(--muted);padding:8px 11px;border-radius:8px;min-height:40px;white-space:nowrap}.segmented button:hover{color:var(--ink)}.segmented button[aria-pressed=true]{background:var(--surface);color:var(--ink);border-color:var(--line);font-weight:600}.chart-period{font-size:11px;color:var(--muted);text-align:right}.chart-legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:11px;color:var(--muted);margin-top:10px}.chart-legend span{display:flex;gap:6px;align-items:center}.legend-line{width:16px;border-top:2px solid;display:inline-block}
+.series-balance,.series-in{color:var(--blue);stroke:var(--blue)}.series-baseline,.series-bills{color:var(--muted);stroke:var(--muted);stroke-dasharray:3 4}.legend-line.series-baseline,.legend-line.series-bills{border-top-style:dashed}.series-target{color:var(--muted);stroke:var(--muted);stroke-dasharray:7 5;opacity:.65}.legend-line.series-target{border-top-style:dashed}.series-tax{color:var(--gold);stroke:var(--gold);stroke-dasharray:2 3}.legend-line.series-tax{border-top-style:dotted}
+.chart{margin-top:10px;min-height:170px}.chart svg{display:block;width:100%;height:auto;overflow:visible}.chart-line{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}.series-target,.series-baseline{stroke-width:1.5}.chart-grid line{stroke:var(--line);stroke-width:.6}.chart-grid text,.axis-month,.axis-unit{fill:var(--muted);font:9px 'PingFang HK',sans-serif}.axis-unit{font-size:10px}.chart-guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4;opacity:.5}.chart-dot{fill:var(--surface);stroke-width:2;stroke-dasharray:none;vector-effect:non-scaling-stroke}.chart-hit{fill:transparent;cursor:pointer;pointer-events:all}.chart-empty{text-align:center;padding:50px 0;color:var(--muted);font-size:13px}
+.chart-extension{fill:var(--blue);opacity:.055}.chart-deadline{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4}.chart-marker-label{fill:var(--muted);font:9px 'PingFang HK',sans-serif}.chart-achieved{fill:var(--olive);stroke:var(--surface);stroke-width:2;vector-effect:non-scaling-stroke}.legend-extension{width:14px;height:10px;background:var(--soft);border:1px dashed var(--line)}.legend-achieved{width:8px;height:8px;background:var(--olive);border-radius:50%}.chart-horizon-note{margin-top:10px}
+.result-edit-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.result-edit-actions button,.result-edit-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 11px;font-size:12px;color:var(--blue);border:1px solid var(--line);border-radius:9px;background:var(--field)}.result-edit-actions button:hover,.result-edit-actions a:hover{border-color:var(--blue)}
+.month-picker{margin-top:8px;padding:8px 10px;background:var(--field);border:1px solid var(--line);border-radius:12px}.month-picker label{font-size:13px;font-weight:550}.month-detail{margin-top:12px}.month-detail-main{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12px}.month-detail-main strong{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-align:right}.month-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}.month-stats dt{font-size:11px;color:var(--muted)}.month-stats dd{font-size:14px;font-weight:550;font-variant-numeric:tabular-nums;margin:6px 0 0;overflow-wrap:anywhere}.chart-help{font-size:11px;color:var(--muted);margin-top:8px}
+.visual-block{margin-top:16px}.visual-block+.visual-block{border-top:1px solid var(--line);padding-top:16px}.visual-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.visual-head .read-label{margin:0;flex:0 0 auto}.visual-block h3{font-size:17px}.allocation-layout{display:grid;grid-template-columns:140px minmax(0,1fr);align-items:center;gap:12px;margin-top:12px}.allocation-ring svg{display:block;width:100%;height:auto}.donut-track{fill:none;stroke:var(--line);stroke-width:24}.allocation-segment{fill:none;stroke-width:24;cursor:pointer}.allocation-segment[aria-selected=false]{opacity:.5}.allocation-net{stroke:var(--blue);background:var(--blue)}.allocation-bills{stroke:var(--muted);background:var(--muted)}.allocation-spending{stroke:var(--olive);background:var(--olive)}.allocation-tax{stroke:var(--gold);background:var(--gold)}.donut-number{fill:var(--ink);font-size:22px;font-weight:600}.donut-label{fill:var(--muted);font-size:10px}
+.allocation-legend{min-width:0;display:grid;gap:8px}.allocation-legend button{display:flex;align-items:center;gap:7px;width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;min-height:44px;text-align:left;font-size:11px;background:var(--surface)}.allocation-legend button:hover{border-color:var(--blue)}.allocation-legend button[aria-pressed=true]{border-color:var(--blue);background:var(--soft)}.allocation-swatch{display:block;width:7px;height:7px;flex:0 0 auto;border-radius:2px}.allocation-name{flex:1;min-width:0}.allocation-share{font-variant-numeric:tabular-nums;color:var(--muted)}.legend-more{color:var(--muted);font-size:14px;line-height:1}
+.allocation-detail{margin-top:10px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:12px}.allocation-detail strong{font-size:20px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.visual-help{font-size:12px;color:var(--muted);line-height:1.55;margin-top:7px}
+.allocation-empty{font-size:13px;color:var(--muted);padding:22px 0}.deficit-bars{margin-top:18px}.deficit-bar-row{margin-top:14px;font-size:12px}.deficit-bar-label{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px}.deficit-bar-track{height:7px;background:var(--line);border-radius:7px;overflow:hidden}.deficit-bar-track span{height:100%;display:block;background:var(--blue)}.deficit-bar-row:nth-child(2) .deficit-bar-track span{background:var(--muted)}
+.ledger{border-top:1px solid var(--line);margin-top:20px;padding:18px 0 0}.table-note{font-size:12px;color:var(--muted);margin:12px 0}.table-wrap{overflow:auto;width:100%}table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}th,td{text-align:right;padding:8px 5px;border-bottom:1px solid var(--line)}th{font-size:11px;color:var(--muted);font-weight:500}th:first-child,td:first-child{text-align:left;padding-left:0}th:last-child,td:last-child{padding-right:0}td:last-child{font-weight:600}td button{font-size:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:8px;min-width:44px;min-height:40px;text-align:left;background:var(--surface)}.year{display:block;color:var(--muted);font-size:10px}tr[aria-selected=true]{background:var(--soft)}tfoot td{color:var(--muted);font-size:11px;border:0}.footer{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6}
+.live-dock{position:fixed;bottom:0;left:0;right:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);padding:12px 28px max(12px,env(safe-area-inset-bottom))}.dock-inner{max-width:1124px;margin:auto;width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px}.dock-money{min-width:0}.dock-money strong{overflow-wrap:anywhere;display:block;font-size:20px;line-height:1.35;font-weight:600;font-variant-numeric:tabular-nums}.dock-action{display:block;margin-top:3px;font-size:11px;color:var(--blue)}.dock-money small{font-size:10px;color:var(--muted)}.dock-eta{flex:0 0 auto;max-width:40%;font-size:11px;text-align:right;color:var(--muted);padding:8px 12px;border:1px solid var(--line);border-radius:9px;min-height:44px}.dock-eta span{display:block;color:var(--ink)}[hidden]{display:none!important}
+@media(max-width:900px){main{max-width:670px;padding-top:22px}.layout{display:block}.topbar{max-width:670px}.slide+.slide,#inputs{margin-top:14px}.hero-value{font-size:clamp(34px,9vw,46px)}}
+@media(max-width:480px){main{padding:18px 14px 145px}.topbar{padding:8px 14px}.topbar>span{font-size:10px}nav a{padding:8px 10px;font-size:12px}.slide{padding:16px 16px;border-radius:18px}h1{font-size:32px}h2{font-size:22px}.intro{gap:10px}.path-grid{gap:10px}.path{padding:13px 10px}.path strong{font-size:17px}.money-head{grid-template-columns:minmax(0,1fr) minmax(126px,55%);gap:10px}.money-head input{font-size:18px;padding-left:8px}.section-total,.mini-total{padding:8px 10px}.section-total output,.mini-total output{font-size:17px}.allocation-layout{grid-template-columns:120px minmax(0,1fr);gap:12px}.allocation-legend button{padding:8px 7px;gap:6px}.allocation-detail strong{font-size:19px}.visual-head .read-label{font-size:10px}.live-dock{padding-left:18px;padding-right:18px}.dock-money strong{font-size:19px}.chart-toolbar{flex-wrap:wrap}.overview-links>*{flex:1 1 auto}.dates{gap:10px;grid-template-columns:1fr}.date-field{display:grid;grid-template-columns:88px minmax(0,1fr);align-items:center;gap:8px}}
+@media(max-width:360px){.goal-presets{grid-template-columns:repeat(3,minmax(0,1fr))}#bill-controls .money-head>label{min-height:36px}#bill-controls{gap:12px 10px}#bill-controls .money-head label small{display:block;margin:0}#bill-controls .slider-line{grid-template-columns:minmax(0,1fr) 40px}.auto-note{display:none}main{padding-left:10px;padding-right:10px}.slide{padding:14px 12px}nav a{padding:8px}.money-head{grid-template-columns:minmax(0,1fr) minmax(116px,56%);gap:8px}.money-head input{font-size:16px;padding-right:27px}.input-mark{right:9px}.money-head>label{font-size:12px}.section-total output,.mini-total output{font-size:15px}.section-total span{font-size:11px}.allocation-layout{grid-template-columns:96px minmax(0,1fr);gap:9px}.allocation-name{font-size:10px}.allocation-legend button{padding:8px 6px}.allocation-share{font-size:10px}.allocation-detail strong{font-size:17px}.path-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dates{grid-template-columns:1fr;gap:8px}.date-field{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;gap:8px}.bonus-date input{width:148px}.dock-money strong{font-size:17px}.dock-eta{padding:7px 9px}.month-stats dd{font-size:12px}table{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+
+.goal-amounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:12px 0 14px}.goal-amounts span{display:block;font-size:12px;color:var(--muted)}.goal-amounts strong{display:block;font-size:clamp(16px,2vw,22px);font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;line-height:1.4;margin-top:3px}.goal-amounts>div:last-child strong{color:var(--blue)}.goal-progress-caption{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted);margin-top:7px}.goal-progress-caption span:last-child{text-align:right}.utility-control{grid-column:1/-1;padding:12px 0;border-top:1px solid var(--line)}#bill-controls .utility-control .money-head{grid-template-columns:minmax(0,1fr) minmax(125px,52%);align-items:center}#bill-controls .utility-control .money-head>label{min-height:0}.payment-fields{display:grid;grid-template-columns:105px minmax(0,1fr);gap:10px}.payment-fields label{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}.payment-fields select,.payment-fields input{font-size:16px;min-height:44px}.payment-status{font-size:11px;line-height:1.5;color:var(--muted);margin-top:6px}.payment-source a{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}.utility-control .slider-line{padding-bottom:12px}.goal-amounts strong{white-space:normal}
+
+.reference-button{border:1px solid var(--line);border-radius:8px;min-height:40px;padding:7px 10px;font-size:12px;color:var(--blue);margin-top:6px;background:var(--field)}#goal-provisional:empty{display:none}
+@media(max-width:360px){.payment-fields{grid-template-columns:1fr;gap:6px}.payment-fields>div{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:8px}.payment-fields label{margin:0}.goal-amounts{gap:10px}}
+.utility-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.utility-actions button,.utility-actions a,.share-banner button,.share-panel-head button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:12px;background:var(--field);color:var(--blue)}.share-panel,.share-banner{border:1px solid var(--line);background:var(--field);border-radius:12px;padding:14px;margin:12px 0}.share-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}.share-panel .name-label{display:block;margin-top:12px}.share-panel input{width:100%;min-width:0;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}.share-panel .action-primary{margin-top:10px}.share-banner{font-size:13px}.share-banner>div{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}#share-import-note:empty{display:none}
+
+.quick-details{font-size:14px}.quick-subtotal{font-size:13px;color:var(--blue);padding:10px 12px;background:var(--soft);border-radius:10px;margin-bottom:12px;font-variant-numeric:tabular-nums}
+.quick-detail-row{border:1px solid var(--line);background:var(--surface);padding:12px 14px;border-radius:14px;margin-top:12px;min-width:0}.quick-row-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.quick-row-head strong{font-size:14px}.quick-row-head button{font-size:12px;color:var(--muted);min-height:44px;padding:8px}
+.quickstart .quick-details .money-head{display:flex;align-items:center;gap:10px}.quickstart .quick-details .money-head>label{font-size:12px;margin:0;flex:1}.quickstart .quick-details .money-entry{width:55%;min-width:0}.quickstart .quick-details .money-head input{font-size:20px;min-height:46px;padding:8px 28px 8px 10px;text-align:right;border-radius:9px}
+.quick-details .money-control{margin-top:10px}.quickstart .quick-details .slider-line{margin-top:0}.quickstart .quick-details .range{height:36px}.quick-details .range-foot{font-size:10px}.quickstart .quick-details .range-foot button{min-height:32px;font-size:10px}.quick-details .money-control>p:empty{display:none}
+.quick-row-field{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;margin-top:8px}.quick-row-field>span{flex-shrink:0}.quick-row-field input,.quick-row-field select,.quick-cost-add select{min-width:0;max-width:65%;min-height:44px;border:1px solid var(--line);background:var(--field);border-radius:9px;padding:8px;font-size:16px}.quick-row-field input[type=text]{width:65%}.quick-row-field input[type=month]{max-width:62%;width:170px}
+.quick-add-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.quick-add-actions button,.quick-cost-add button{min-height:46px;border:1px solid var(--blue);color:var(--blue);background:var(--surface);border-radius:10px;padding:8px;font-size:12px}.quick-cost-add{display:flex;gap:8px;margin-top:14px}.quick-cost-add select{flex:1;max-width:none}.quick-cost-add button{flex-shrink:0}.quick-details+.quick-zero{margin-top:12px}
+body[data-quick-compact=true] .quick-shell{justify-content:flex-start;padding-top:28px}body[data-quick-compact=true] #quick-progress{margin-bottom:22px}body[data-quick-compact=true] .quick-help{margin:10px 0 16px;min-height:0}body[data-quick-compact=true] #quick-title{font-size:27px}
+
+.quick-bill-modes{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:18px}.quick-bill-modes button{min-height:44px;padding:8px;font-size:14px;border-radius:8px;color:var(--muted)}.quick-bill-modes button[aria-pressed=true]{background:var(--soft);color:var(--blue);font-weight:600}.quick-bill-modes button:hover{color:var(--blue)}
+</style></head><body data-view="onboarding">
+<section id="quickstart" class="quickstart" aria-labelledby="quick-title">
+ <div class="quick-top"><span>存款目標計算器</span><button type="button" id="quick-skip">跳到完整工具</button></div>
+ <div class="quick-shell"><div class="quick-progress-row"><span>6 條基本問題 · Bonus 可略過</span><span id="quick-count" aria-live="polite">1 / 6</span></div><div class="track" id="quick-progress" role="progressbar" aria-label="問答進度" aria-valuemin="0" aria-valuemax="6" aria-valuenow="1"><span id="quick-progress-fill"></span></div>
+ <form id="quick-form" novalidate><h1 id="quick-title" tabindex="-1">我要儲幾多？</h1><p id="quick-help" class="quick-help"></p>
+ <div id="quick-panel-goal"><div id="quick-money-goal"></div><div class="quick-presets" id="quick-presets-goal" role="group" aria-label="目標金額快捷選擇"></div></div>
+ <div id="quick-panel-months" hidden><div class="quick-months-entry"><label for="quick-months">月數</label><input type="text" inputmode="numeric" id="quick-months" data-quick-key="months" maxlength="2" aria-describedby="quick-until"></div><input type="range" class="range" id="quick-months-slider" data-quick-key="months" min="1" max="60" step="1" value="12" aria-label="我畀自己幾多個月"><p id="quick-until" class="quick-until"></p><div class="quick-presets" id="quick-presets-months" role="group" aria-label="目標期限快捷選擇"></div></div>
+ <div id="quick-panel-startCash" hidden><div id="quick-money-startCash"></div></div>
+ <div id="quick-panel-income" hidden><div id="quick-money-income"></div></div>
+ <div id="quick-panel-spending" hidden><div id="quick-money-spending"></div></div>
+ <div id="quick-panel-bills" hidden><div class="quick-bill-modes" role="group" aria-label="固定帳單填法"><button type="button" data-quick-bill-mode="total" aria-pressed="true">每月總額</button><button type="button" data-quick-bill-mode="detail" aria-pressed="false">逐項拆細</button></div><div id="quick-bills-total"><div id="quick-money-bills"></div></div> <div id="quick-bills-detail" class="quick-details" hidden><p id="quick-costs-summary" class="quick-subtotal" aria-live="polite"></p><p id="quick-costs-note" class="help"></p><div id="quick-costs-rows"></div><p id="quick-costs-empty" class="help">逐項加帳單，合計會自動計。</p><div class="quick-cost-add"><select id="quick-cost-kind" aria-label="揀帳單類別"></select><button type="button" id="quick-add-cost">＋ 加帳單</button></div></div></div>
+ <div id="quick-panel-extra" class="quick-details" hidden><p id="quick-income-summary" class="quick-subtotal" aria-live="polite"></p><div id="quick-income-rows"></div><p id="quick-income-empty" class="help">未有補充收入，直接略過就得。</p><div class="quick-add-actions"><button type="button" id="quick-add-once">＋ Bonus／一次性</button><button type="button" id="quick-add-monthly">＋ 每月額外收入</button></div></div>
+
+ <button type="button" id="quick-optional-skip" class="quick-zero" hidden>略過呢步</button>
+ <button type="button" id="quick-zero" class="quick-zero" hidden></button><p id="quick-detail-note" class="help"></p><p id="quick-error" class="error" role="alert"></p>
+ <div class="quick-actions"><button type="button" id="quick-back">上一題</button><button type="submit" id="quick-next" class="action-primary">下一題</button></div></form>
+ <p id="quick-save-note" class="quick-privacy">只存呢個瀏覽器，唔會上傳。</p><noscript>請開啟 JavaScript 使用儲蓄試算。</noscript></div></section>
+<header><div class="topbar"><span>存款目標計算器</span><nav aria-label="內容"><button type="button" id="start-quick">逐題填</button><a href="#goal">結果</a><a href="#inputs">編輯</a><a href="#visual-summary">圖解</a></nav></div></header>
+<main><div id="shared-plan-banner" class="share-banner" hidden><p>呢份係朋友分享嘅計劃，未取代我原有設定。</p><div><button type="button" id="keep-shared-plan">用呢份做我嘅計劃</button><button type="button" id="restore-local-plan">返回我的計劃</button></div></div><p id="share-import-note" class="help" role="status"></p><div class="layout"><div class="overview">
+<section class="slide" id="goal" aria-labelledby="goal-title">
+ <div class="intro"><span class="badge" id="example-status">虛構示例，可替換</span><div class="quiet-actions"><button type="button" id="load-example">載入示例</button><button type="button" id="clear-inputs">清空重填</button></div></div>
+ <span class="read-label">自動計算結果</span><h1 id="goal-title" tabindex="-1">我幾時儲到？</h1>
+ <div class="utility-actions"><button type="button" id="share-plan">分享計劃</button><a href="./offline.zip" download="savings-goal-calculator.zip" id="download-offline">下載離線版</a></div><section id="share-panel" class="share-panel" aria-label="分享此計劃" hidden><div class="share-panel-head"><strong>分享一份可調整嘅計劃</strong><button type="button" id="close-share" aria-label="關閉分享">關閉</button></div><p class="help">連結包含金額及自訂名稱；任何收到連結嘅人都睇到。只喺你複製／傳送時分享。</p><label for="share-link" class="name-label">分享連結</label><input id="share-link" type="text" readonly spellcheck="false"><button type="button" id="copy-share" class="action-primary">複製連結</button><p class="help" id="share-copy-status" role="status"></p></section><div class="hero"><p class="label" id="result-label">到時我會有</p><p class="hero-value" id="ending">—</p><p class="goal-line" id="goal-line"></p><p class="help" id="simple-plan-note"></p></div>
+ <div class="track" id="progress" role="progressbar" aria-label="儲蓄目標完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+ <div class="gap-row"><span id="gap-label">仲差</span><strong id="shortfall">—</strong></div>
+ <div class="overview-links"><a class="action-primary" href="#inputs">打開完整工具</a><a class="action-secondary" href="#visual-summary">查看儲蓄圖解</a></div>
+ <div class="result-edit-actions" role="group" aria-label="補充我的計劃"><button type="button" id="result-add-income" data-add-from-result="income">＋ 每月額外收入</button><button type="button" id="result-add-bonus" data-add-from-result="bonus">＋ Bonus／一次性收入</button><a href="#housing-section">拆細固定帳單</a></div>
+ <div class="eta-box"><span class="label">我幾時儲夠？</span><strong id="eta">—</strong></div><p class="help" id="eta-note"></p>
+ <p class="plan-summary" id="plan-summary"></p>
+ <div id="paths"><div class="path-grid"><button class="path" type="button" id="try-monthly"><small>我每月再多儲</small><strong id="monthly-needed">—</strong><span>＋ 試下我每月多賺呢筆</span></button><button class="path" type="button" id="try-once"><small>或者我到時再多一筆</small><strong id="once-needed">—</strong><span>＋ 試下我到時多一筆</span></button></div></div>
+ <p class="limit" id="spending-limit"></p><p class="baseline" id="baseline-note"></p><p class="help" id="assumption-note"></p><p class="error" id="status" role="status"></p>
+
+</section>
+<section class="slide" id="months" aria-labelledby="months-title">
+ <h2 id="months-title">我嘅儲蓄走勢</h2><div class="chart-toolbar"><div class="segmented" role="group" aria-label="折線圖視角"><button type="button" data-chart-mode="balance" aria-pressed="true">淨儲蓄</button><button type="button" data-chart-mode="flow" aria-pressed="false">每月收支</button></div><span class="chart-period" id="chart-period"></span></div>
+ <p class="help chart-horizon-note" id="chart-horizon-note"></p><div class="chart-legend" id="chart-legend" aria-label="圖例"></div><div class="chart" id="chart"></div>
+ <div class="month-picker"><span class="name-label">拖動選月份</span><label for="chart-month" id="selected-month">選擇月份</label><input class="range" id="chart-month" type="range" min="0" max="6" step="1" value="6" aria-label="選擇圖表月份"></div><p class="chart-help">點圖或拖 slider 睇明細。</p>
+ <div class="month-detail" id="month-detail" aria-live="polite"></div><p class="help" id="timing-note"></p><p class="help" id="income-note"></p>
+</section><section class="slide" id="visual-summary" aria-labelledby="visual-title"><h2 id="visual-title">我啲錢去咗邊？</h2><p class="help" id="visual-period"></p><div id="plan-visuals"></div><a class="next" href="#inputs">返回編輯計劃</a></section></div>
+<section class="slide" id="inputs" aria-labelledby="inputs-title">
+ <h2 id="inputs-title" tabindex="-1">填我嘅儲蓄計劃</h2><div class="edit-guide"><p><strong>✎ 改金額或拖滑桿，即刻睇結果。</strong></p></div>
+ <div class="currency-line"><label for="currency">貨幣</label><select id="currency" data-field="currency"><option>HKD</option><option>USD</option><option>CNY</option><option>TWD</option><option>EUR</option><option>GBP</option></select></div>
+ <div class="input-section" id="start-section"><h3>01　我要儲幾多</h3><div class="section-total"><span>我仲要儲<small class="auto-note">自動計算</small></span><output id="subtotal-start">—</output></div><div id="control-goal"></div><div id="control-startCash"></div>
+ <div class="dates"><div class="date-field"><label for="startMonth">我由幾時開始？</label><input id="startMonth" data-field="startMonth" type="month" min="1900-01" max="2200-12"></div><div class="date-field"><label for="endMonth">我想幾時儲到？</label><input id="endMonth" data-field="endMonth" type="month" min="1900-01" max="2200-12"></div></div>
+ <div class="horizon-head"><label for="horizon-slider">我畀自己幾耐？</label><output id="horizon-value" for="horizon-slider">—</output></div><input class="range" id="horizon-slider" type="range" min="1" max="60" value="7" step="1" aria-label="目標期限月數"><p class="help">預設由下個月起計12個完整月；可調整。</p></div>
+ <div class="input-section" id="income-section"><h3 id="incomes-summary">02　我每個月收入</h3><div class="section-total"><span>我每月一共收到<small class="auto-note">自動計算</small></span><output id="subtotal-income">—</output></div><div id="incomes"></div><p class="oneoff-empty" id="incomes-empty" hidden>我未填每月收入。</p><button class="text-button" type="button" id="add-income">＋ 我仲有其他每月收入</button><div class="income-trial"><span class="trial-label">試下我多份收入 · 未確認</span><div id="control-monthlyNet"></div></div><p class="help" id="income-subtotal-note"></p></div>
+ <div class="input-section" id="oneoffs-section"><h3 id="oneoffs-summary">03　我嘅 Bonus／額外一筆</h3><div class="section-total"><span>呢段時間我額外收到<small class="auto-note">自動計算</small></span><output id="subtotal-bonus">—</output></div><div id="oneoffs"></div><p class="oneoff-empty" id="oneoffs-empty" hidden>我暫時冇 Bonus 或額外一筆。</p><button class="text-button" type="button" id="add-oneoff">＋ 我有 Bonus／額外一筆</button><p class="help">揀我收到錢嘅月份，只計一次。稅金喺下面填。</p><p class="help" id="bonus-subtotal-note"></p></div>
+ <div class="input-section" id="spending-section"><h3>04　我每個月支出</h3><div class="section-total"><span>我每月日常使費<small class="auto-note">自動計算</small></span><output id="subtotal-spending">—</output></div><div id="control-spendingMonthly"></div></div>
+ <div class="input-section" id="housing-section"><h3>05　我要交嘅租金同帳單</h3><div class="section-total"><span><span id="bills-subtotal-label">呢段時間我要交／留起</span><small class="auto-note">自動計算</small></span><output id="billsMonthly">—</output></div><p class="help" id="bill-migration-note"></p><button class="text-button" type="button" id="apply-example-bills" hidden>沿用本例拆項及付款週期</button><div id="bill-controls"></div><div class="insurance-group" id="insurance-section"><h3 id="insurance-heading">我嘅保險</h3><div class="mini-total"><span>我每月留起交保費<small class="auto-note">自動計算</small></span><output id="insurance-total">—</output></div><div id="insurance-items"></div><p class="oneoff-empty" id="insurance-empty" hidden>我暫時冇填保險。</p><button class="text-button" type="button" id="add-insurance">＋ 我仲有保險</button><p class="help">切換會換算；年額÷12預留至分，非扣款日。保費請按保單改。</p></div><p class="help">以上由儲蓄支付，唔使再加落日常使費。稅金喺下面填。</p></div>
+ <div class="input-section" id="tax-section"><h3>06　我要留幾多交稅</h3><div class="section-total"><span>呢段時間我一共留起<small class="auto-note">自動計算</small></span><output id="subtotal-tax">—</output></div><div id="control-taxTotal"></div></div>
+ <div class="input-section" id="trial-section"><h3>07　試下我可唔可以快啲儲夠</h3><div class="section-total"><span>試下我到時多一筆<small class="auto-note">自動計算</small></span><output id="subtotal-once">—</output></div><div id="control-onceNet"></div><button class="text-button" type="button" id="reset-plan" hidden>清除我嘅額外收入試算</button><p class="help">冇就填0。Bonus 已填過就唔使再計；自己戶口之間轉錢唔算收入。</p></div>
+<a class="next plan-link" href="#visual-summary">查看我的儲蓄圖解</a></section></div>
+<section class="ledger" aria-labelledby="ledger-title"><h3 id="ledger-title">我每個月儲到幾多</h3><p class="table-note" id="table-note"></p><div class="table-wrap"><table aria-label="逐月入儲蓄、帳單及稅金扣除後結餘"><thead><tr><th>月份</th><th>入儲蓄</th><th>帳單及預留</th><th>稅金預留</th><th>淨結餘</th></tr></thead><tbody id="month-rows"></tbody><tfoot><tr><td>合計</td><td id="total-in">—</td><td id="total-bills">—</td><td id="total-tax">—</td><td id="final-balance">—</td></tr></tfoot></table></div></section>
+<p class="footer">只作試算。數字只存呢個瀏覽器，無帳號、無追蹤、無金融資料上傳。分享連結內含設定，任何持有連結嘅人都可查看。<br><span id="offline-status">準備離線使用中…</span><br><span id="save-status"></span></p>
+</main>
+<div class="live-dock" aria-label="即時儲蓄結果"><div class="dock-inner"><a class="dock-money" href="#goal"><small id="dock-gap">到時我會有</small><strong id="dock-ending">—</strong><span class="dock-action">查看計算結果 ›</span></a><a class="dock-eta" href="#months">查看走勢<span id="dock-eta">—</span></a></div></div>
+<script>const PlannerConfig={"publicUrl": "https://savings-goal-calculator-9eo.pages.dev/"};</script><script>(function(root){
+ 'use strict';
+ const fields=['startCash','goal','monthlyIncome','otherMonthly','spendingMonthly','billsMonthly','taxTotal'];
+ const currencies=['HKD','USD','CNY','TWD','EUR','GBP'];
+ const cents=value=>Math.round(Number(value)*100);
+ const billFields=['housing','management','electricity','water','gas','mobile','internet','rates','insurance','other'];
+ const isAmount=value=>((typeof value==='number'&&Math.round(value*100)/100===value)||(typeof value==='string'&&/^-?(?:\d+(?:\.\d{0,2})?|\.\d{1,2})$/.test(value)))&&Number.isFinite(Number(value));
+ const billTotal=items=>billFields.reduce((sum,key)=>sum+cents(items[key]),0);
+ const amountOK=value=>isAmount(value)&&Number(value)>=0&&Number(value)<=1e8;
+ const incomeTotal=state=>state.incomeItems===undefined?cents(state.monthlyIncome)+cents(state.otherMonthly):state.incomeItems.reduce((sum,row)=>sum+cents(row.amount),0);
+ const monthlyReserve=(value,months)=>Math.round(cents(value)/months);
+ const utilityKeys=['electricity','water','gas'];
+ const paymentPeriods=[1,2,3,4,6,12];
+ function paymentDue(row,month){
+  if(!cents(row.amount))return false;
+  const offset=monthIndex(month)-monthIndex(row.nextMonth);
+  return offset>=0&&offset%row.every===0;
+ }
+ function billsForMonth(state,month){
+  let total=cents(state.billsMonthly);
+  if(state.utilityPayments)for(const key of utilityKeys){
+   const row=state.utilityPayments[key];
+   total-=cents(state.billItems[key]);
+   if(paymentDue(row,month))total+=cents(row.amount);
+  }
+  return total;
+ }
+ const insuranceTotal=items=>items.reduce((sum,row)=>sum+monthlyReserve(row.amount,row.frequency==='annual'?12:1),0);
+ function validatePlan(plan){return [plan.monthlyNet??0,plan.onceNet??0].some(value=>!isAmount(value)||Number(value)<0||Number(value)>1e8)?['額外淨收入請填0或正數，最多兩位小數。']:[];}
+ function monthIndex(value){
+  const match=/^(\d{4})-(0[1-9]|1[0-2])$/.exec(value||'');
+  if(!match||Number(match[1])<1900||Number(match[1])>2200)throw new Error('請填有效月份。');
+  return Number(match[1])*12+Number(match[2])-1;
+ }
+ function monthRange(start,end){
+  const first=monthIndex(start),last=monthIndex(end),count=last-first+1;
+  if(count<1)throw new Error('結束月份必須等於或遲過開始月份。');
+  if(count>60)throw new Error('每次最多模擬60個月。');
+  return Array.from({length:count},(_,i)=>{const value=first+i;return Math.floor(value/12)+'-'+String(value%12+1).padStart(2,'0');});
+ }
+ function shiftMonth(start,offset){
+  const index=monthIndex(start)+offset;
+  return Math.floor(index/12)+'-'+String(index%12+1).padStart(2,'0');
+ }
+ function defaultMonths(now=new Date()){
+  const current=now.getFullYear()*12+now.getMonth(),format=index=>Math.floor(index/12)+'-'+String(index%12+1).padStart(2,'0');
+  return {startMonth:format(current+1),endMonth:format(current+12)};
+ }
+ function example(){return {version:1,currency:'HKD',...defaultMonths(),startCash:0,goal:300000,monthlyIncome:30000,otherMonthly:0,spendingMonthly:5000,billsMonthly:8800,taxTotal:0,oneOffs:[]};}
+ function blank(){return {version:1,currency:'HKD',...defaultMonths(),...Object.fromEntries(fields.map(key=>[key,''])),oneOffs:[]};}
+ function validate(state){
+  if(!state||typeof state!=='object')return ['請填入基本數字。'];
+  const errors=[];
+  if(!currencies.includes(state.currency))errors.push('請選擇貨幣。');
+  for(const key of fields){
+   const value=state[key],number=Number(value);
+   if(!isAmount(value))errors.push('請填齊有效金額，最多兩位小數；0亦可以。');
+   else if(number>1e8||number<0)errors.push('所有輸入金額請填0或正數，並喺可用範圍內。');
+  }
+  if(state.incomeItems!==undefined){
+   const rows=state.incomeItems;
+   const valid=Array.isArray(rows)&&rows.length<=12&&rows.every(row=>row&&typeof row.id==='string'&&/^[a-z][a-z0-9]{0,31}$/.test(row.id)&&typeof row.name==='string'&&row.name.length<=60&&amountOK(row.amount));
+   if(!valid||new Set(rows?.map?.(row=>row?.id)).size!==rows?.length)errors.push('每月收入最多12筆，金額請填0或正數，最多兩位小數。');
+   else if(incomeTotal(state)!==cents(state.monthlyIncome)+cents(state.otherMonthly))errors.push('每月收入合計同拆項唔一致。');
+  }
+  if(state.billItems!==undefined){
+   const valid=state.billItems&&billFields.every(key=>isAmount(state.billItems[key])&&Number(state.billItems[key])>=0&&Number(state.billItems[key])<=1e8);
+   if(!valid)errors.push('帳單拆項請填0或正數，最多兩位小數。');
+   else if(billTotal(state.billItems)!==cents(state.billsMonthly))errors.push('帳單合計同拆項唔一致。');
+  }
+  if(state.ratesQuarterly!==undefined){
+   if(!amountOK(state.ratesQuarterly))errors.push('差餉／地租季均請填0或正數。');
+   else if(!state.billItems||monthlyReserve(state.ratesQuarterly,3)!==cents(state.billItems.rates))errors.push('差餉季度金額同每月預留唔一致。');
+  }
+  if(state.insuranceItems!==undefined){
+   const rows=state.insuranceItems;
+   const valid=Array.isArray(rows)&&rows.length<=12&&rows.every(row=>row&&typeof row.id==='string'&&/^[a-z][a-z0-9]{0,31}$/.test(row.id)&&typeof row.name==='string'&&row.name.length<=60&&['monthly','annual'].includes(row.frequency)&&amountOK(row.amount));
+   if(!valid||new Set(rows?.map?.(row=>row?.id)).size!==rows?.length)errors.push('保險最多12項，請填有效金額並選擇月繳或年繳。');
+   else if(!state.billItems||insuranceTotal(rows)!==cents(state.billItems.insurance))errors.push('保險項目同每月預留唔一致。');
+  }
+  if(state.utilityPayments!==undefined){
+   for(const key of utilityKeys){
+    const row=state.utilityPayments?.[key];
+    if(!row||!amountOK(row.amount)||!paymentPeriods.includes(row.every))errors.push('水電煤請填有效每期金額及付款週期。');
+    else{
+     if(!state.billItems||monthlyReserve(row.amount,row.every)!==cents(state.billItems[key]))errors.push('水電煤每期金額同帳單拆項唔一致。');
+     if(cents(row.amount)>0||row.nextMonth)try{monthIndex(row.nextMonth);}catch{errors.push('請揀水電煤嘅下次付款月份。');}
+    }
+   }
+  }
+  try{monthRange(state.startMonth,state.endMonth);}catch(error){errors.push(error.message);}
+  if(!Array.isArray(state.oneOffs)||state.oneOffs.length>12)errors.push('最多加入12筆一次性收入。');
+  else for(const row of state.oneOffs){
+   if(!row||!isAmount(row.amount)||Number(row.amount)<0||Number(row.amount)>1e8)errors.push('一次性收入請填0或正數，最多兩位小數。');
+   if(Number(row?.amount)>0)try{monthIndex(row.month);}catch{errors.push('請揀一次性收入月份。');}
+  }
+  return [...new Set(errors)];
+ }
+ function monthlyRow(state,plan,month,index,previousBalance){
+  const oneOffIncome=state.oneOffs.filter(row=>row.month===month).reduce((n,row)=>n+cents(row.amount),0);
+  const adjustment=cents(plan.monthlyNet??0)+(month===state.endMonth?cents(plan.onceNet??0):0);
+  const income=incomeTotal(state)+oneOffIncome+adjustment,spending=cents(state.spendingMonthly);
+  const savingsIn=income-spending,bills=billsForMonth(state,month),tax=index===0?cents(state.taxTotal):0,netChange=savingsIn-bills-tax;
+  return {month,income,oneOffIncome,adjustment,spending,savingsIn,bills,tax,netChange,balance:previousBalance+netChange};
+ }
+ function forecast(state,plan={monthlyNet:0,onceNet:0}){
+  const errors=validate(state);if(errors.length)throw new Error(errors[0]);
+  const planErrors=validatePlan(plan);if(planErrors.length)throw new Error(planErrors[0]);
+  const months=monthRange(state.startMonth,state.endMonth),rows=[];
+  let balance=cents(state.startCash),totalIncome=0,totalSavingsIn=0,totalBills=0,totalTax=0,totalSpending=0,totalOneOffIncome=0;
+  for(const [index,month] of months.entries()){
+   const row=monthlyRow(state,plan,month,index,balance);balance=row.balance;rows.push(row);
+   totalIncome+=row.income;totalSavingsIn+=row.savingsIn;totalBills+=row.bills;totalTax+=row.tax;totalSpending+=row.spending;totalOneOffIncome+=row.oneOffIncome;
+  }
+  const startCash=cents(state.startCash);
+  return {rows,startCash,ending:balance,growth:balance-startCash,totalIncome,totalSavingsIn,totalBills,totalTax,totalSpending,totalOneOffIncome,excludedOneOffs:state.oneOffs.filter(row=>Number(row.amount)>0&&!months.includes(row.month)).length};
+ }
+ function targetReport(state,result=forecast(state)){
+  const shortfall=Math.max(0,cents(state.goal)-result.ending),spendingOnlyMaximum=result.ending+result.totalSpending;
+  return {shortfall,surplus:Math.max(0,result.ending-cents(state.goal)),onceNeeded:shortfall,monthlyNeeded:Math.ceil(shortfall/result.rows.length),spendingOnlyMaximum,spendingOnlyShortfall:Math.max(0,cents(state.goal)-spendingOnlyMaximum)};
+ }
+ function estimateGoal(state,plan={monthlyNet:0,onceNet:0}){
+  forecast(state,plan); // Apply the same input and plan validation as the selected-period forecast.
+  const monthlyNet=incomeTotal(state)+cents(plan.monthlyNet??0)-cents(state.spendingMonthly)-cents(state.billsMonthly);
+  const count=Math.min(120,2201*12-monthIndex(state.startMonth));
+  let balance=cents(state.startCash);
+  for(let index=0;index<count;index++){
+   const month=shiftMonth(state.startMonth,index);
+   balance=monthlyRow(state,plan,month,index,balance).balance;
+   if(balance>=cents(state.goal))return {reached:true,month,months:index+1,balance,monthlyNet,limitMonth:shiftMonth(state.startMonth,count-1)};
+  }
+  return {reached:false,month:null,months:null,balance,monthlyNet,limitMonth:shiftMonth(state.startMonth,count-1)};
+ }
+ function projectToGoal(state,plan={monthlyNet:0,onceNet:0}){
+  const eta=estimateGoal(state,plan),plannedMonths=monthRange(state.startMonth,state.endMonth).length;
+  const count=Math.max(plannedMonths,eta.reached?eta.months:Math.min(120,2201*12-monthIndex(state.startMonth)));
+  const rows=[],baselineRows=[];let balance=cents(state.startCash),baseline=balance;
+  for(let index=0;index<count;index++){
+   const month=shiftMonth(state.startMonth,index),row=monthlyRow(state,plan,month,index,balance),base=monthlyRow(state,{monthlyNet:0,onceNet:0},month,index,baseline);
+   balance=row.balance;baseline=base.balance;rows.push(row);baselineRows.push(base);
+  }
+  return {rows,baselineRows,eta,deadlineMonth:state.endMonth,deadlineIndex:plannedMonths-1,extended:count>plannedMonths};
+ }
+ root.SavingsCalculator={fields,currencies,cents,billFields,billTotal,isAmount,amountOK,incomeTotal,monthlyReserve,insuranceTotal,utilityKeys,paymentPeriods,paymentDue,billsForMonth,validatePlan,monthRange,shiftMonth,defaultMonths,example,blank,validate,forecast,targetReport,estimateGoal,projectToGoal};
+ if(typeof module!=='undefined')module.exports=root.SavingsCalculator;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const box={width:360,height:230,left:48,right:342,top:22,bottom:198};
+ const number=value=>Number(value.toFixed(2));
+ const monthLabel=value=>value.slice(0,4)+'/'+Number(value.slice(5));
+ function axisLabel(minor){
+  const dollars=minor/100,absolute=Math.abs(dollars);
+  if(absolute>=1e8)return number(dollars/1e8)+'億';
+  if(absolute>=1e4)return number(dollars/1e4)+'萬';
+  return new Intl.NumberFormat('en-HK',{maximumFractionDigits:2}).format(dollars);
+ }
+ function draw({result,base,goal,mode,currency,deadlineMonth,achievedMonth}){
+  const rows=result.rows;
+  const series=mode==='flow'?
+   [{key:'in',label:'入儲蓄',values:rows.map(row=>row.savingsIn)},
+    {key:'bills',label:'帳單及預留',values:rows.map(row=>row.bills)},
+    {key:'tax',label:'稅金預留',values:rows.map(row=>row.tax)}]:
+   [{key:'balance',label:'淨儲蓄',values:rows.map(row=>row.balance)}];
+  if(mode==='balance'&&rows.some((row,i)=>row.balance!==base.rows[i].balance))
+   series.unshift({key:'baseline',label:'未加額',values:base.rows.map(row=>row.balance)});
+  if(mode==='balance')series.unshift({key:'target',label:'目標',values:rows.map(()=>goal)});
+  const values=[0,...series.flatMap(line=>line.values)],low=Math.min(...values),high=Math.max(...values);
+  const extent=high-low||100,minimum=low<0?low-extent*.06:0,maximum=high+extent*.12;
+  const x=index=>rows.length===1?(box.left+box.right)/2:box.left+index*(box.right-box.left)/(rows.length-1);
+  const y=value=>box.bottom-(value-minimum)/(maximum-minimum)*(box.bottom-box.top);
+  const points=line=>line.key==='target'?`${box.left},${number(y(goal))} ${box.right},${number(y(goal))}`:
+   line.values.map((value,i)=>`${number(x(i))},${number(y(value))}`).join(' ');
+  const ticks=Array.from({length:4},(_,i)=>minimum+(maximum-minimum)*i/3);
+  const labelIndices=rows.length<=3?rows.map((_,i)=>i):[0,Math.floor((rows.length-1)/2),rows.length-1];
+  const start=rows[0].month,end=rows[rows.length-1].month;
+  const deadlineIndex=rows.findIndex(row=>row.month===deadlineMonth),achievedIndex=rows.findIndex(row=>row.month===achievedMonth);
+  const hasExtension=deadlineIndex>=0&&deadlineIndex<rows.length-1,deadlineX=hasExtension?number(x(deadlineIndex)):null;
+  const svg=`<svg viewBox="0 0 ${box.width} ${box.height}" role="img" aria-labelledby="chart-title chart-description">
+   <title id="chart-title">${mode==='flow'?'每月入儲蓄、帳單與稅金':'每月淨儲蓄與目標'} · ${currency}</title>
+   <desc id="chart-description">${start} 至 ${end}，${rows.length}個月。點選圖中月份，或用下方月份滑桿查看確實金額。</desc>
+   <text class="axis-unit" x="0" y="12">${currency}</text>
+   ${hasExtension?`<rect class="chart-extension" x="${deadlineX}" y="${box.top}" width="${number(box.right-deadlineX)}" height="${box.bottom-box.top}"/><line class="chart-deadline" x1="${deadlineX}" x2="${deadlineX}" y1="${box.top}" y2="${box.bottom}"/><text class="chart-marker-label" x="${Math.max(box.left+26,Math.min(box.right-26,deadlineX))}" y="12" text-anchor="middle">原定期限</text>`:''}
+   ${ticks.map(value=>`<g class="chart-grid"><line x1="${box.left}" x2="${box.right}" y1="${number(y(value))}" y2="${number(y(value))}"/><text x="${box.left-7}" y="${number(y(value)+3)}" text-anchor="end">${axisLabel(value)}</text></g>`).join('')}
+   ${labelIndices.map(i=>`<text class="axis-month" x="${number(x(i))}" y="218" text-anchor="middle">${monthLabel(rows[i].month)}</text>`).join('')}
+   ${series.map(line=>`<polyline class="chart-line series-${line.key}" data-series="${line.key}" data-values="${line.values.join(',')}" points="${points(line)}"/>`).join('')}
+   <line class="chart-guide" x1="0" x2="0" y1="${box.top}" y2="${box.bottom}"/>
+   ${series.filter(line=>line.key!=='target').map(line=>`<circle class="chart-dot series-${line.key}" data-dot="${line.key}" r="4"/>`).join('')}
+   ${mode==='balance'&&achievedIndex>=0?`<circle class="chart-achieved" cx="${number(x(achievedIndex))}" cy="${number(y(rows[achievedIndex].balance))}" r="5"><title>${achievedMonth} 預計首次達標</title></circle>`:''}
+   ${rows.map((row,i)=>{
+    const left=i===0?box.left-12:(x(i-1)+x(i))/2,right=i===rows.length-1?box.right+12:(x(i)+x(i+1))/2;
+    return `<rect class="chart-hit" data-chart-month="${i}" data-x="${number(x(i))}" x="${number(left)}" y="${box.top}" width="${number(right-left)}" height="${box.bottom-box.top}"><title>${row.month}</title></rect>`;
+   }).join('')}
+  </svg>`;
+  const legend=series.map(line=>`<span><i class="legend-line series-${line.key}"></i>${line.label}</span>`).join('')+(hasExtension?'<span><i class="legend-extension"></i>期限後預測</span>':'')+(mode==='balance'&&achievedIndex>=0?'<span><i class="legend-achieved"></i>預計達標</span>':'');
+  return {svg,legend};
+ }
+ function select(chart,index){
+  const hit=chart.querySelector(`[data-chart-month="${index}"]`);if(!hit)return;
+  const x=hit.dataset.x,guide=chart.querySelector('.chart-guide');guide.setAttribute('x1',x);guide.setAttribute('x2',x);
+  for(const dot of chart.querySelectorAll('[data-dot]')){
+   const line=chart.querySelector(`[data-series="${dot.dataset.dot}"]`),point=line.getAttribute('points').split(' ')[index].split(',');
+   dot.setAttribute('cx',point[0]);dot.setAttribute('cy',point[1]);
+  }
+  chart.querySelectorAll('[data-chart-month]').forEach(node=>node.classList.toggle('selected',Number(node.dataset.chartMonth)===index));
+ }
+ root.SavingsChart={draw,select};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const cap=1e8,configs=new Map();
+ const format=value=>new Intl.NumberFormat('en-HK',{minimumFractionDigits:Number.isInteger(Number(value))?0:2,maximumFractionDigits:2}).format(Number(value));
+ function parse(text){
+  const value=String(text).trim().replace(/,/g,'');
+  if(value==='')return '';
+  return /^-?(?:\d+(?:\.\d{0,2})?|\.\d{1,2})$/.test(value)?Number(value):NaN;
+ }
+ function read(input){
+  if(input.type==='range')return Number(input.value);
+  const text=input.value,value=parse(text);if(value===''||!Number.isFinite(value))return value===''?'':text;
+  const tail=(text.slice(input.selectionStart??text.length).match(/[^,]/g)||[]).length;
+  const raw=text.trim().replace(/,/g,''),parts=raw.split('.');
+  const whole=parts[0].replace(/^(-?)0+(?=\d)/,'$1').replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  const next=(whole===''?'0':whole==='-'?'-0':whole)+(parts.length>1?'.'+parts[1]:'');
+  if(next!==text){
+   input.value=next;let count=0,index=next.length;
+   while(index>0&&count<tail){index--;if(next[index]!==',')count++;}
+   input.setSelectionRange(index,index);
+  }
+  return value;
+ }
+ function mount(container,config){
+  configs.set(config.key,config);
+  const {id,key,label,detail='',rangeId,hint='',placeholder='0'}=config;
+  const accessible=label+(detail?'（'+detail+'）':'');
+  container.classList.add('money-control');
+  container.innerHTML=`<div class="money-head"><label for="${rangeId}">${label}${detail?'<small>'+detail+'</small>':''}</label><div class="money-entry"><input id="${id}" data-money-key="${key}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="${accessible}，精確金額" placeholder="${placeholder}"><span class="input-mark" aria-hidden="true">✎</span></div></div><div class="slider-line"><input class="range" id="${rangeId}" data-money-key="${key}" type="range" min="0" max="${config.defaultMax}" step="0.01" value="0" aria-describedby="${id}-hint"><div class="range-foot"><span id="${id}-bounds"></span><button type="button" data-expand="${key}" aria-label="擴大${accessible} slider 範圍" title="擴大可調金額上限">範圍＋</button></div></div><p class="help" id="${id}-hint">${hint}</p>${key==='goal'?'<div class="goal-presets" role="group" aria-label="目標快捷金額">'+[[100000,'100k'],[500000,'500k'],[1000000,'1M'],[2000000,'2M'],[5000000,'5M'],[10000000,'10M']].map(([value,label])=>`<button type="button" data-goal="${value}" aria-pressed="false">${label}</button>`).join('')+'</div>':''}`;
+ }
+ function sync(input,value){if(document.activeElement!==input)input.value=String(value);}
+ function render(key,value,ranges,currency){
+  const config=configs.get(key),input=document.getElementById(config.id),slider=document.getElementById(config.rangeId);
+  const numeric=root.SavingsCalculator.isAmount(value),valid=numeric&&Number(value)>=0&&Number(value)<=cap;
+  const previous=ranges[key]||config.defaultMax;
+  const maximum=Math.min(cap,Math.max(config.defaultMax,previous,valid?Math.ceil(Number(value)/1000)*1000:0));
+  ranges[key]=maximum;slider.max=String(maximum);slider.min='0';
+  sync(input,numeric?format(Number(value)):value);sync(slider,valid?Number(value):0);
+  slider.setAttribute('aria-valuetext',valid?currency+' '+format(Number(value)):'請填0或以上有效金額');
+  input.setAttribute('aria-invalid',String(value!==''&&!valid));
+  document.getElementById(config.id+'-bounds').textContent='0 — '+format(maximum);
+  document.querySelector(`[data-expand="${key}"]`).disabled=maximum===cap;
+  if(key==='goal')for(const button of document.querySelectorAll('[data-goal]')){
+   button.setAttribute('aria-pressed',String(valid&&Number(button.dataset.goal)===Number(value)));
+   button.setAttribute('aria-label','目標 '+currency+' '+format(Number(button.dataset.goal)));
+  }
+ }
+ function expand(key,ranges){const config=configs.get(key);if(!config)return;ranges[key]=Math.min(cap,(ranges[key]||config.defaultMax)*2);}
+ root.MoneyControls={mount,render,expand,parse,read,format};
+ if(typeof module!=='undefined')module.exports=root.MoneyControls;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator;
+ const definitions=[
+  {key:'housing',label:'我嘅租金／供樓',defaultMax:100000},
+  {key:'management',label:'我嘅管理費',defaultMax:10000,hint:'可填0；按你的實際收費調整。'},
+  {key:'electricity',label:'電費',defaultMax:10000},
+  {key:'water',label:'水費',defaultMax:8000},
+  {key:'gas',label:'煤氣',defaultMax:10000},
+  {key:'mobile',label:'我嘅手機月費',defaultMax:2000},
+  {key:'internet',label:'我嘅上網月費',defaultMax:2000},
+  {key:'rates',label:'我每季差餉／地租',defaultMax:30000,hint:'每季金額除以3作每月預留；唔代表實際付款月份。'},
+  {key:'other',label:'其他帳單／未拆項總額',defaultMax:50000}
+ ];
+ const empty=()=>Object.fromEntries(G.billFields.map(key=>[key,0]));
+ const example=()=>({housing:8000,management:0,electricity:300,water:50,gas:150,mobile:100,internet:200,rates:0,insurance:0,other:0});
+ function initialise(state,savedItems,source){
+  if(savedItems&&typeof savedItems==='object'&&!Array.isArray(savedItems)){
+   state.billItems=Object.fromEntries(G.billFields.map(key=>[key,['string','number'].includes(typeof savedItems[key])?savedItems[key]:0]));
+   state.billSource=['example','custom','legacy'].includes(source)?source:'custom';
+   // Keep both saved values for the model to reject any mismatch rather than silently repairing it.
+  }else{state.billItems={...empty(),other:state.billsMonthly===''?0:state.billsMonthly};state.billSource='legacy';}
+  return state;
+ }
+ function setExample(state){state.billItems=example();state.billSource='example';state.billsMonthly=G.billTotal(state.billItems)/100;return state;}
+ function setEmpty(state){state.billItems=empty();state.billSource='custom';state.billsMonthly=0;return state;}
+ function retotal(state){
+  const valid=G.billFields.every(name=>G.isAmount(state.billItems[name])&&Number(state.billItems[name])>=0&&Number(state.billItems[name])<=1e8);
+  state.billsMonthly=valid?G.billTotal(state.billItems)/100:'';
+ }
+ function update(state,key,value){state.billItems[key]=value;retotal(state);if(key==='other'||state.billSource!=='legacy')state.billSource='custom';}
+ root.CalculatorBills={definitions,empty,example,initialise,setExample,setEmpty,retotal,update};
+ if(typeof module!=='undefined')module.exports=root.CalculatorBills;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator;
+ const amount=value=>['number','string'].includes(typeof value)?value:'';
+ function syncTotals(state){
+  const salary=state.incomeItems.find(row=>row.id==='salary');
+  const others=state.incomeItems.filter(row=>row.id!=='salary');
+  state.monthlyIncome=salary?salary.amount:0;
+  state.otherMonthly=others.every(row=>G.amountOK(row.amount))?others.reduce((sum,row)=>sum+G.cents(row.amount),0)/100:'';
+  return state;
+ }
+ function initialise(state,items){
+  if(Array.isArray(items)){
+   const ids=new Set();
+   state.incomeItems=items.slice(0,12).map((row,i)=>{
+    let id=typeof row?.id==='string'&&/^[a-z][a-z0-9]{0,31}$/.test(row.id)?row.id:'i'+(i+1);
+    let duplicate=0;while(ids.has(id))id='i'+(i+1)+'x'+(++duplicate);
+    ids.add(id);return {id,name:typeof row?.name==='string'?row.name.slice(0,60):'',amount:amount(row?.amount)};
+   });
+  }else state.incomeItems=[{id:'salary',name:'我每個月人工',amount:state.monthlyIncome},{id:'other',name:'我其他每月收入',amount:state.otherMonthly}];
+  return syncTotals(state);
+ }
+ function control(row){return row.id==='salary'?{key:'monthlyIncome',id:'monthlyIncome',rangeId:'salary-slider',defaultMax:200000}:row.id==='other'?{key:'otherMonthly',id:'otherMonthly',rangeId:'other-slider',defaultMax:100000}:{key:'income-'+row.id,id:'income-amount-'+row.id,rangeId:'income-slider-'+row.id,defaultMax:100000};}
+ function findByControl(state,key){return state.incomeItems.find(row=>control(row).key===key);}
+ function add(state){
+  if(state.incomeItems.length>=12)return null;
+  let n=1;while(state.incomeItems.some(row=>row.id==='i'+n))n++;
+  const row={id:'i'+n,name:'',amount:0};state.incomeItems.push(row);syncTotals(state);return row;
+ }
+ function remove(state,id){state.incomeItems=state.incomeItems.filter(row=>row.id!==id);syncTotals(state);}
+ function update(state,id,value){const row=state.incomeItems.find(row=>row.id===id);if(row){row.amount=value;syncTotals(state);}}
+ root.CalculatorIncome={initialise,syncTotals,control,findByControl,add,remove,update};
+ if(typeof module!=='undefined')module.exports=root.CalculatorIncome;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator,B=root.CalculatorBills;
+ const scalar=value=>['string','number'].includes(typeof value)?value:'';
+ function sync(state){
+  state.billItems.rates=G.amountOK(state.ratesQuarterly)?G.monthlyReserve(state.ratesQuarterly,3)/100:'';
+  state.billItems.insurance=state.insuranceItems.every(row=>G.amountOK(row.amount)&&['monthly','annual'].includes(row.frequency))?G.insuranceTotal(state.insuranceItems)/100:'';
+  if(state.utilityPayments)for(const key of G.utilityKeys){const row=state.utilityPayments[key];state.billItems[key]=row&&G.amountOK(row.amount)&&G.paymentPeriods.includes(row.every)?G.monthlyReserve(row.amount,row.every)/100:'';}
+  B.retotal(state);return state;
+ }
+ function initialise(state,saved={}){
+  state.ratesQuarterly=saved.ratesQuarterly===undefined?(G.amountOK(state.billItems.rates)?G.cents(state.billItems.rates)*3/100:state.billItems.rates):scalar(saved.ratesQuarterly);
+  if(Array.isArray(saved.insuranceItems)){
+   const ids=new Set();state.insuranceItems=saved.insuranceItems.slice(0,12).map((row,i)=>{
+    let id=typeof row?.id==='string'&&/^[a-z][a-z0-9]{0,31}$/.test(row.id)?row.id:'p'+(i+1),n=0;
+    while(ids.has(id))id='p'+(i+1)+'x'+(++n);ids.add(id);
+    return {id,name:typeof row?.name==='string'?row.name.slice(0,60):'',amount:scalar(row?.amount),frequency:['monthly','annual'].includes(row?.frequency)?row.frequency:''};
+   });
+  }else state.insuranceItems=Number(state.billItems.insurance)>0?[{id:'legacy',name:'保險',amount:state.billItems.insurance,frequency:'monthly'}]:[];
+  state.utilityPayments=Object.fromEntries(G.utilityKeys.map(key=>{
+   const existing=saved.utilityPayments?.[key],every=key==='water'?4:2;
+   return [key,saved.utilityPayments===undefined?{amount:G.amountOK(state.billItems[key])?G.cents(state.billItems[key])*every/100:state.billItems[key],every,nextMonth:state.startMonth,confirmed:false,estimated:true,amountSource:'legacy-estimate'}:{amount:scalar(existing?.amount),every:existing?.every,nextMonth:typeof existing?.nextMonth==='string'?existing.nextMonth:'',confirmed:existing?.confirmed===true,estimated:existing?.estimated!==false,amountSource:['legacy-estimate','entered','converted'].includes(existing?.amountSource)?existing.amountSource:existing?.estimated===false?'entered':'legacy-estimate'}];
+  }));
+  return sync(state);
+ }
+ function control(row){return {key:'insurance-'+row.id,id:row.id==='legacy'?'bill-insurance':'insurance-amount-'+row.id,rangeId:row.id==='legacy'?'bill-slider-insurance':'insurance-slider-'+row.id,defaultMax:row.frequency==='annual'?240000:20000};}
+ function add(state){if(state.insuranceItems.length>=12)return null;let i=1;while(state.insuranceItems.some(row=>row.id==='p'+i))i++;const row={id:'p'+i,name:'',amount:0,frequency:'annual'};state.insuranceItems.push(row);sync(state);state.billSource='custom';return row;}
+ function update(state,id,field,value){const row=state.insuranceItems.find(row=>row.id===id);if(!row)return;
+  if(field==='frequency'&&['monthly','annual'].includes(value)&&row.frequency!==value&&G.amountOK(row.amount)&&['monthly','annual'].includes(row.frequency))row.amount=(value==='annual'?G.cents(row.amount)*12:G.monthlyReserve(row.amount,12))/100;
+  row[field]=value;sync(state);state.billSource='custom';
+ }
+ function remove(state,id){state.insuranceItems=state.insuranceItems.filter(row=>row.id!==id);sync(state);state.billSource='custom';}
+ function updateRates(state,value){state.ratesQuarterly=value;sync(state);state.billSource='custom';}
+ function updateUtility(state,key,field,value){
+  const row=state.utilityPayments[key];if(!row)return;
+  if(field==='every'){
+   value=Number(value);
+   if(G.paymentPeriods.includes(value)&&G.paymentPeriods.includes(row.every)&&G.amountOK(row.amount))row.amount=Math.round(G.cents(row.amount)/row.every*value)/100;
+   row.estimated=true;row.amountSource='converted';
+  }
+  if(field==='amount'){row.estimated=false;row.amountSource='entered';}
+  if(field==='nextMonth'){row.confirmed=true;}
+  row[field]=value;sync(state);state.billSource='custom';
+ }
+ root.CalculatorCosts={initialise,sync,control,add,update,remove,updateRates,updateUtility};
+ if(typeof module!=='undefined')module.exports=root.CalculatorCosts;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator,C=root.CalculatorCosts,M=root.MoneyControls;
+ const $=id=>document.getElementById(id);
+ const sync=(input,value)=>{if(document.activeElement!==input)input.value=String(value);};
+ const money=(minor,currency)=>currency+' '+new Intl.NumberFormat('en-HK',{minimumFractionDigits:2,maximumFractionDigits:2}).format(minor/100);
+ function render(state,ranges){
+  const box=$('insurance-items'),ids=new Set(state.insuranceItems.map(row=>row.id));
+  for(const node of [...box.children])if(!ids.has(node.dataset.insuranceId))node.remove();
+  state.insuranceItems.forEach((row,i)=>{
+   let node=[...box.children].find(node=>node.dataset.insuranceId===row.id);const config=C.control(row);
+   if(!node){
+    node=document.createElement('div');node.className='income-row insurance-row';node.dataset.insuranceId=row.id;
+    node.innerHTML=`<div class="income-head"><div class="income-name-field"><label class="name-label" for="insurance-name-${row.id}">名稱</label><input class="income-name" id="insurance-name-${row.id}" data-insurance-name="${row.id}" maxlength="60" type="text" autocomplete="off"></div><button type="button" data-remove-insurance="${row.id}">移除</button></div><div class="frequency-line"><label for="insurance-frequency-${row.id}">金額單位</label><select id="insurance-frequency-${row.id}" data-insurance-frequency="${row.id}"><option value="monthly">按月</option><option value="annual">按年</option><option value="" hidden>請選擇</option></select></div><div id="control-insurance-${row.id}"></div><p class="help" id="insurance-reserve-${row.id}"></p>`;
+    box.appendChild(node);M.mount($('control-insurance-'+row.id),{...config,label:'每期保費'});
+   }
+   const name=$('insurance-name-'+row.id),label=row.name.trim()||'保險 '+(i+1);
+   sync(name,row.name);name.placeholder='保險名稱，例如醫療／人壽';name.setAttribute('aria-label','保險 '+(i+1)+' 名稱');
+   sync($('insurance-frequency-'+row.id),row.frequency);$('insurance-frequency-'+row.id).setAttribute('aria-label',label+'金額單位');
+   node.querySelector('[data-remove-insurance]').setAttribute('aria-label','移除保險 '+(i+1));
+   ranges[config.key]=Math.max(ranges[config.key]||0,config.defaultMax);M.render(config.key,row.amount,ranges,state.currency);
+   node.querySelector('.money-head label').textContent=row.frequency==='annual'?'我每年保費':'我每月保費／預留';
+   $(config.id).setAttribute('aria-label',label+(row.frequency==='annual'?'每年':'每月')+'保費，精確金額');$(config.rangeId).setAttribute('aria-label',label+'保費');
+   node.querySelector('[data-expand]').setAttribute('aria-label','擴大'+label+'保費 slider 範圍');
+   $('insurance-reserve-'+row.id).textContent=G.amountOK(row.amount)&&['monthly','annual'].includes(row.frequency)?'每月預留 '+money(G.monthlyReserve(row.amount,row.frequency==='annual'?12:1),state.currency):'';
+  });
+  $('insurance-heading').textContent=`我嘅保險（${state.insuranceItems.length}項）`;
+  $('insurance-empty').hidden=state.insuranceItems.length>0;$('add-insurance').disabled=state.insuranceItems.length>=12;
+  $('insurance-total').textContent=G.amountOK(state.billItems.insurance)?money(G.cents(state.billItems.insurance),state.currency):'—';
+  $('bill-rates-hint').textContent='季額÷3，每月預留 '+(G.amountOK(state.billItems.rates)?money(G.cents(state.billItems.rates),state.currency):'—')+'（非付款日）';
+ }
+ root.CostControls={render};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator,$=id=>document.getElementById(id);
+ const names={electricity:'電費',water:'水費',gas:'煤氣'};
+ const sources={electricity:['中電：約60日出單，按賬單到期／扣款月付款。','https://www.clp.com.hk/en/residential/open-electricity-account-residential/first-bill-initial-deposit'],water:['水務署：通常每4個月出單，按實際繳費期限選月。','https://www.esd.wsd.gov.hk/esd/bnc/requestForScenario/requestForScenarioInit.do?USER_LANG=LANG_TC&pageFlag=1'],gas:['煤氣：每2個月出單，付款按單上日期；可改月扣。','https://www.towngas.com/tc/Household/Customer-Services/Billing-Service']};
+ function mount(){
+  for(const key of G.utilityKeys){
+   const node=$('control-bill-'+key);node.classList.add('utility-control');
+   const fields=document.createElement('div');fields.className='utility-settings';
+   fields.innerHTML=`<div class="payment-fields"><div><label for="payment-every-${key}">我幾耐交一次？</label><select id="payment-every-${key}" data-utility="${key}" data-payment-field="every">${G.paymentPeriods.map(n=>`<option value="${n}">${n===1?'每月':'每'+n+'個月'}</option>`).join('')}<option value="" hidden>請選擇</option></select></div><div><label for="payment-next-${key}">我下次幾月交？</label><input type="month" id="payment-next-${key}" data-utility="${key}" data-payment-field="nextMonth" min="1900-01" max="2200-12"></div></div><p class="payment-status" id="payment-status-${key}"></p><p class="help payment-source"><a href="${sources[key][1]}" target="_blank" rel="noopener noreferrer">${sources[key][0]} ↗</a></p>`;
+   node.appendChild(fields);
+  }
+ }
+ function render(state){
+  for(const key of G.utilityKeys){
+   const row=state.utilityPayments[key],node=$('control-bill-'+key);
+   node.querySelector('.money-head label').textContent='我嘅'+names[key]+' · 每次交幾多？';
+   $('bill-'+key).setAttribute('aria-label',names[key]+'每次付款金額，精確金額');
+   for(const [field,id] of [['every','payment-every-'],['nextMonth','payment-next-']])if(document.activeElement!==$(id+key))$(id+key).value=String(row[field]??'');
+   $('payment-every-'+key).setAttribute('aria-label',names[key]+'付款週期');$('payment-next-'+key).setAttribute('aria-label',names[key]+'下次付款月份');
+   $('payment-status-'+key).textContent=(row.confirmed?'所選付款月':'示例付款月，請按賬單改')+'；'+(row.amountSource==='converted'?'切換週期會換算每期金額。':row.estimated?'每期金額只係示例。':'每期沿用輸入金額試算。');
+  }
+ }
+ root.PaymentControls={mount,render};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator;
+ const format=minor=>new Intl.NumberFormat('en-HK',{minimumFractionDigits:2,maximumFractionDigits:2}).format(minor/100);
+ const month=value=>Number(value.slice(0,4))+'年'+Number(value.slice(5))+'月';
+ const percent=value=>new Intl.NumberFormat('en-HK',{maximumFractionDigits:1}).format(value)+'%';
+ function data(state,result){
+  return {currency:state.currency,startMonth:state.startMonth,endMonth:state.endMonth,start:result.startCash,ending:result.ending,goal:G.cents(state.goal),provisional:state.utilityPayments&&G.utilityKeys.some(key=>Number(state.utilityPayments[key].amount)>0&&!state.utilityPayments[key].confirmed),income:result.totalIncome,outflows:result.totalSpending+result.totalBills+result.totalTax,growth:result.growth,
+   parts:[{key:'net',label:'新增淨儲蓄',value:result.growth},{key:'bills',label:'住屋及帳單',value:result.totalBills},{key:'spending',label:'個人消費',value:result.totalSpending},{key:'tax',label:'稅金預留',value:result.totalTax}]};
+ }
+ function progress(summary,view){
+  const value=view==='start'?summary.start:summary.ending,ratio=summary.goal>0?Math.max(0,Math.min(100,value/summary.goal*100)):(value>=0?100:0);
+  return {value,ratio,gap:Math.max(0,summary.goal-value),surplus:Math.max(0,value-summary.goal)};
+ }
+ function create(container){
+  let summary=null,selected='net';
+  container.innerHTML='<div class="visual-block"><div class="visual-head"><h3>我嘅收入點分配？</h3><span class="read-label">計算結果</span></div><p class="visual-help" id="allocation-scope"></p><div id="allocation-chart"></div><div class="allocation-detail" id="allocation-detail" aria-live="polite"></div><p class="visual-help" id="allocation-note"></p></div><div class="visual-block" id="progress-explainer"><h3 id="progress-title"></h3><p class="visual-help" id="goal-provisional"></p><div class="goal-amounts" aria-live="polite"><div><span>到時我會有</span><strong id="goal-projected"></strong></div><div><span id="goal-gap-label">仲差</span><strong id="goal-gap"></strong></div></div><div class="track" id="goal-progress" role="progressbar" aria-label="目標完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="goal-progress-fill"></span></div><div class="goal-progress-caption"><span id="goal-progress-percent"></span><span id="goal-progress-target"></span></div></div>';
+  const $=id=>container.querySelector('#'+id),money=value=>summary.currency+' '+format(value);
+  function draw(){
+   if(!summary)return;
+   $('allocation-scope').textContent='總收入 '+money(summary.income)+'；唔包括起始儲蓄。';
+   if(summary.income>0&&summary.growth>=0){
+    const circumference=2*Math.PI*56;let offset=0;
+    const ring=summary.parts.filter(part=>part.value>0).map(part=>{
+     const length=part.value/summary.income*circumference,markup=`<circle class="allocation-segment allocation-${part.key}" data-slice="${part.key}" data-value="${part.value}" aria-selected="${part.key===selected}" cx="80" cy="80" r="56" transform="rotate(-90 80 80)" stroke-dasharray="${length} ${circumference-length}" stroke-dashoffset="${-offset}"/>`;offset+=length;return markup;
+    }).join('');
+    $('allocation-chart').innerHTML=`<div class="allocation-layout"><div class="allocation-ring"><svg viewBox="0 0 160 160" role="img" aria-label="期間收入分配；各分類金額及比例見右方按鈕"><circle class="donut-track" cx="80" cy="80" r="56"/>${ring}<text class="donut-number" x="80" y="78" text-anchor="middle">${percent(summary.growth/summary.income*100)}</text><text class="donut-label" x="80" y="96" text-anchor="middle">收入淨留低</text></svg></div><div class="allocation-legend">${summary.parts.map(part=>`<button type="button" data-slice="${part.key}" aria-pressed="${part.key===selected}" aria-label="${part.label} ${money(part.value)}，佔期間收入 ${percent(part.value/summary.income*100)}"><i class="allocation-swatch allocation-${part.key}"></i><span class="allocation-name">${part.label}</span><span class="allocation-share">${percent(part.value/summary.income*100)}</span><span class="legend-more" aria-hidden="true">›</span></button>`).join('')}</div></div>`;
+    const chosen=summary.parts.find(part=>part.key===selected)||summary.parts[0];
+    $('allocation-detail').innerHTML=`<span>${chosen.label}</span><strong>${money(chosen.value)}</strong>`;
+    $('allocation-note').textContent='點分類睇金額。淨儲蓄＝收入−消費−帳單−稅金，含已套用試算。';
+   }else if(summary.growth<0){
+    const maximum=Math.max(summary.income,summary.outflows,1);
+    $('allocation-chart').innerHTML=`<div class="deficit-bars">${[{label:'期間收入',value:summary.income},{label:'全部支出及預留',value:summary.outflows}].map(row=>`<div class="deficit-bar-row"><div class="deficit-bar-label"><span>${row.label}</span><strong>${format(row.value)}</strong></div><div class="deficit-bar-track"><span style="width:${row.value/maximum*100}%"></span></div></div>`).join('')}</div>`;
+    $('allocation-detail').innerHTML=`<span>需要原有儲蓄／額外資金</span><strong>${money(-summary.growth)}</strong>`;
+    $('allocation-note').textContent='期間支出及預留超過收入，所以用長條比較。所需資金唔代表已有足夠現金；月末不足會喺折線圖顯示。';
+   }else{
+    $('allocation-chart').innerHTML='<p class="allocation-empty">期間收入同支出都係0。</p>';$('allocation-detail').textContent='';$('allocation-note').textContent='起始儲蓄仍會計入下方目標完成度。';
+   }
+   const p=progress(summary,'end');
+   $('progress-title').textContent='到 '+month(summary.endMonth);
+   $('goal-provisional').textContent=summary.provisional?'試算 · 含未核實水電煤付款月':'';
+   $('goal-projected').textContent=money(p.value);
+   $('goal-gap-label').textContent=p.surplus?'超出目標':p.gap?'仲差':'已達標';
+   $('goal-gap').textContent=money(p.gap||p.surplus);
+   $('goal-progress-fill').style.width=p.ratio+'%';
+   $('goal-progress').setAttribute('aria-valuenow',String(p.ratio));
+   $('goal-progress').setAttribute('aria-valuetext',money(p.value)+'，目標 '+money(summary.goal)+(p.value<0?'，結餘不足':p.surplus?'，已超出目標':''));
+   $('goal-progress-percent').textContent=p.value<0?'結餘不足':p.surplus?'已達標':percent(p.ratio)+' 達成';
+   $('goal-progress-target').textContent='目標 '+money(summary.goal);
+
+  }
+  container.addEventListener('click',event=>{const slice=event.target.closest('[data-slice]');if(slice&&summary){selected=slice.dataset.slice;draw();container.querySelector(`button[data-slice="${selected}"]`)?.focus();}});
+  return {render(state,result){summary=data(state,result);container.hidden=false;draw();},clear(){summary=null;container.hidden=true;}};
+ }
+ root.SavingsVisuals={data,progress,create};
+ if(typeof module!=='undefined')module.exports=root.SavingsVisuals;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator,B=root.CalculatorBills,I=root.CalculatorIncome,C=root.CalculatorCosts;
+ const limit=16384,fromMinor=value=>{if(!Number.isSafeInteger(value)||value<0||value>1e10)throw new Error('Invalid amount');return value/100;};
+ const tuple=(value,length)=>{if(!Array.isArray(value)||value.length!==length)throw new Error('Invalid shape');return value;};
+ const list=value=>{if(!Array.isArray(value)||value.length>12)throw new Error('Invalid list');return value;};
+ const name=value=>{if(typeof value!=='string'||value.length>60)throw new Error('Invalid name');return value;};
+ const date=value=>{if(typeof value!=='string')throw new Error('Invalid month');if(value)G.monthRange(value,value);return value;};
+ function pack(state,plan){
+  const errors=[...G.validate(state),...G.validatePlan(plan)];if(errors.length)throw new Error(errors[0]);
+  return {v:1,c:state.currency,m:[state.startMonth,state.endMonth],a:[state.startCash,state.goal,state.spendingMonthly,state.taxTotal].map(G.cents),i:state.incomeItems.map(row=>[row.name,G.cents(row.amount)]),b:['housing','management','mobile','internet','other'].map(key=>G.cents(state.billItems[key])),r:G.cents(state.ratesQuarterly),p:state.insuranceItems.map(row=>[row.name,G.cents(row.amount),row.frequency==='annual'?'a':'m']),u:G.utilityKeys.map(key=>{const row=state.utilityPayments[key];return [G.cents(row.amount),row.every,row.nextMonth];}),o:state.oneOffs.map(row=>[G.cents(row.amount),row.month]),x:[plan.monthlyNet??0,plan.onceNet??0].map(G.cents)};
+ }
+ function unpack(value){
+  const keys=['v','c','m','a','i','b','r','p','u','o','x'];
+  if(!value||typeof value!=='object'||Object.keys(value).length!==keys.length||keys.some(key=>!Object.hasOwn(value,key))||value.v!==1||!G.currencies.includes(value.c))throw new Error('Invalid link');
+  tuple(value.m,2);tuple(value.a,4);tuple(value.b,5);tuple(value.u,3);tuple(value.x,2);
+  const s={version:1,currency:value.c,startMonth:date(value.m[0]),endMonth:date(value.m[1]),startCash:fromMinor(value.a[0]),goal:fromMinor(value.a[1]),spendingMonthly:fromMinor(value.a[2]),taxTotal:fromMinor(value.a[3]),monthlyIncome:0,otherMonthly:0,billsMonthly:0,oneOffs:list(value.o).map(row=>{tuple(row,2);return {amount:fromMinor(row[0]),month:date(row[1])};}),billItems:B.empty(),billSource:'custom'};
+  ['housing','management','mobile','internet','other'].forEach((key,i)=>s.billItems[key]=fromMinor(value.b[i]));
+  const saved={ratesQuarterly:fromMinor(value.r),insuranceItems:list(value.p).map((row,i)=>{tuple(row,3);if(!['a','m'].includes(row[2]))throw new Error('Invalid frequency');return {id:'p'+(i+1),name:name(row[0]),amount:fromMinor(row[1]),frequency:row[2]==='a'?'annual':'monthly'};}),utilityPayments:Object.fromEntries(G.utilityKeys.map((key,i)=>{const row=tuple(value.u[i],3);if(!G.paymentPeriods.includes(row[1]))throw new Error('Invalid period');return [key,{amount:fromMinor(row[0]),every:row[1],nextMonth:date(row[2]),confirmed:true,estimated:false,amountSource:'entered'}];}))};
+  I.initialise(s,list(value.i).map((row,i)=>{tuple(row,2);return {id:i===0?'salary':i===1?'other':'i'+(i+1),name:name(row[0]),amount:fromMinor(row[1])};}));C.initialise(s,saved);
+  const plan={monthlyNet:fromMinor(value.x[0]),onceNet:fromMinor(value.x[1])};
+  const errors=[...G.validate(s),...G.validatePlan(plan)];if(errors.length)throw new Error(errors[0]);return {state:s,plan};
+ }
+ function encode(state,plan){
+  const bytes=new TextEncoder().encode(JSON.stringify(pack(state,plan)));
+  const text=btoa(Array.from(bytes,b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'');
+  if(text.length>limit)throw new Error('Link too long');return text;
+ }
+ function decode(text){
+  if(typeof text!=='string'||text.length>limit||!text.length||!/^[A-Za-z0-9_-]+$/.test(text))throw new Error('Invalid link');
+  const raw=atob(text.replaceAll('-','+').replaceAll('_','/'));
+  return unpack(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(raw,c=>c.charCodeAt(0)))));
+ }
+ function fromHash(hash){return hash.startsWith('#plan=')?decode(hash.slice(6)):null;}
+ function url(state,plan,base){const link=new URL(base);if(!['http:','https:'].includes(link.protocol))throw new Error('Invalid site URL');link.search='';link.hash='plan='+encode(state,plan);return link.href;}
+ root.PlannerShare={pack,unpack,encode,decode,fromHash,url};
+ if(typeof module!=='undefined')module.exports=root.PlannerShare;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator,B=root.CalculatorBills,I=root.CalculatorIncome,C=root.CalculatorCosts;
+ const keys=['goal','months','startCash','income','spending','bills'];
+ const costKinds=['housing','management','electricity','water','gas','mobile','internet','rates','insurance','other'];
+ const copy=value=>JSON.parse(JSON.stringify(value));
+ function seed(snapshot){
+  const s=snapshot?.state;
+  let months=12;try{if(s)months=G.monthRange(s.startMonth,s.endMonth).length;}catch{}
+  const amount=value=>G.amountOK(value)?Number(value):'';
+  return {goal:s?amount(s.goal):300000,months,startCash:s?amount(s.startCash):0,income:s?amount(G.incomeTotal(s)/100):'',spending:s?amount(s.spendingMonthly):'',bills:s?amount(s.billsMonthly):''};
+ }
+ function valid(key,value){return key==='months'?/^\d+$/.test(String(value))&&Number(value)>=1&&Number(value)<=60:G.amountOK(value);}
+ function details(snapshot){
+  const s=snapshot?.state,costs=[];
+  if(s?.billSource!=='legacy'&&s?.billItems){
+   for(const kind of costKinds){
+    if(kind==='insurance'){for(const row of s.insuranceItems||[])costs.push({kind,name:row.name,amount:row.amount,frequency:row.frequency});}
+    else if(G.utilityKeys.includes(kind)){const row=s.utilityPayments?.[kind];if(Number(row?.amount)>0)costs.push({kind,...row});}
+    else {const amount=kind==='rates'?s.ratesQuarterly:s.billItems[kind];if(Number(amount)>0)costs.push({kind,amount});}
+   }
+  }
+  return {incomeUsed:false,costsUsed:false,income:(s?.oneOffs||[]).map((row,i)=>({id:'r'+(i+1),kind:'once',amount:row.amount,month:row.month})),costs:costs.map((row,i)=>({...row,id:'r'+(i+1)}))};
+ }
+ function cleanDetails(value){
+  if(!value||typeof value.incomeUsed!=='boolean'||typeof value.costsUsed!=='boolean')return null;
+  const result={incomeUsed:value.incomeUsed,costsUsed:value.costsUsed};
+  for(const type of ['income','costs']){
+   if(!Array.isArray(value[type])||value[type].length>24)return null;
+   const ids=new Set();result[type]=[];
+   for(const row of value[type]){
+    if(!row||!/^r\d{1,4}$/.test(row.id)||ids.has(row.id)||!(type==='income'?['monthly','once']:costKinds).includes(row.kind))return null;
+    if(!['string','number'].includes(typeof row.amount)||String(row.amount).length>32)return null;
+    ids.add(row.id);const clean={id:row.id,kind:row.kind,amount:row.amount};
+    for(const key of ['name','month','nextMonth','frequency'])if(row[key]!==undefined){if(typeof row[key]!=='string'||row[key].length>(key==='name'?60:16))return null;clean[key]=row[key];}
+    if(row.every!==undefined){if(!G.paymentPeriods.includes(row.every))return null;clean.every=row.every;}
+    for(const key of ['confirmed','estimated'])if(row[key]!==undefined){if(typeof row[key]!=='boolean')return null;clean[key]=row[key];}
+    result[type].push(clean);
+   }
+  }
+  return result;
+ }
+ function cleanDraft(raw){
+  if(![1,2,3].includes(raw?.version)||!['onboarding','full','results'].includes(raw.view))return null;
+  if(raw.view!=='onboarding')return {version:3,view:raw.view};
+  const limit=raw.version===1?6:raw.version===2?8:7;
+  if(!Number.isInteger(raw.step)||raw.step<0||raw.step>=limit||!raw.values||typeof raw.values!=='object')return null;
+  const values={};for(const key of keys){const v=raw.values[key];if(!['number','string'].includes(typeof v)||String(v).length>32)return null;values[key]=v;}
+  const extra=raw.version===1?null:cleanDetails(raw.details);if(raw.version!==1&&!extra)return null;
+  if(raw.version===3&&!['total','detail'].includes(raw.billMode))return null;
+  const step=raw.version===2&&raw.step===7?5:raw.step;
+  const billMode=raw.version===3?raw.billMode:raw.version===2&&(raw.step===7||extra.costsUsed)?'detail':null;
+  return {version:3,view:'onboarding',step,values,details:extra,billMode};
+ }
+ function apply(snapshot,values,extra,billMode){
+  const s=snapshot?copy(snapshot.state):{...G.example(),monthlyIncome:'',otherMonthly:0,spendingMonthly:'',billsMonthly:'',taxTotal:0,oneOffs:[]};
+  for(const key of ['goal','startCash','spending'])if(valid(key,values[key]))s[key==='spending'?'spendingMonthly':key]=Number(values[key]);
+  if(valid('months',values.months))s.endMonth=G.shiftMonth(s.startMonth,Number(values.months)-1);
+  if(!snapshot||valid('income',values.income)&&G.cents(values.income)!==G.incomeTotal(s)){
+   s.incomeItems=[{id:'salary',name:'我每個月收入',amount:valid('income',values.income)?Number(values.income):''}];I.syncTotals(s);
+  }
+  if(!snapshot||billMode==='total'||valid('bills',values.bills)&&G.cents(values.bills)!==G.cents(s.billsMonthly)){
+   s.billItems={...B.empty(),other:valid('bills',values.bills)?Number(values.bills):''};s.billSource='legacy';
+   C.initialise(s,{ratesQuarterly:0,insuranceItems:[]});
+  }
+  if(extra?.incomeUsed){
+   s.oneOffs=extra.income.filter(row=>row.kind==='once').map(row=>({amount:row.amount,month:row.month}));
+   for(const row of extra.income.filter(row=>row.kind==='monthly')){const added=I.add(s);if(!added)throw new Error('每月收入最多 12 筆。');added.name=row.name||'額外收入';added.amount=row.amount;}I.syncTotals(s);
+  }
+  if(extra?.costsUsed){
+   s.billItems=B.empty();const insuranceItems=[],utilityPayments={};let ratesQuarterly=0;
+   for(const row of extra.costs){
+    if(row.kind==='insurance')insuranceItems.push({id:row.id,name:row.name||'保險',amount:row.amount,frequency:row.frequency});
+    else if(row.kind==='rates')ratesQuarterly=row.amount;
+    else if(G.utilityKeys.includes(row.kind))utilityPayments[row.kind]={amount:row.amount,every:row.every,nextMonth:row.nextMonth,confirmed:row.confirmed===true,estimated:row.estimated!==false,amountSource:'entered'};
+    else s.billItems[row.kind]=row.amount;
+   }
+   for(const kind of G.utilityKeys)utilityPayments[kind]??={amount:0,every:kind==='water'?4:2,nextMonth:s.startMonth,confirmed:false,estimated:true,amountSource:'entered'};
+   C.initialise(s,{ratesQuarterly,insuranceItems,utilityPayments});s.billSource='custom';
+  }
+  return {state:s,plan:snapshot?copy(snapshot.plan):{monthlyNet:0,onceNet:0}};
+ }
+ function detailError(snapshot,values,extra,type){
+  const rows=extra[type];
+  if(rows.some(row=>!G.amountOK(row.amount)))return '金額請填 0 或以上，最多兩位小數。';
+  if(type==='income'){
+   if(rows.filter(row=>row.kind==='once').length>12)return 'Bonus／一次性收入最多 12 筆。';
+   if(rows.filter(row=>row.kind==='monthly').length+apply(snapshot,values).state.incomeItems.length>12)return '每月收入最多 12 筆。';
+   for(const row of rows.filter(row=>row.kind==='once'))try{G.shiftMonth(row.month,0);}catch{return '請揀 Bonus／一次性收入嘅到手月份。';}
+  }else{
+   const unique=rows.filter(row=>row.kind!=='insurance').map(row=>row.kind);
+   if(new Set(unique).size!==unique.length||rows.filter(row=>row.kind==='insurance').length>12)return '同類帳單只需填一項；保險最多 12 項。';
+   for(const row of rows){
+    if(row.kind==='insurance'&&!['monthly','annual'].includes(row.frequency))return '請揀保險月繳或年繳。';
+    if(G.utilityKeys.includes(row.kind)){if(!G.paymentPeriods.includes(row.every))return '請揀付款週期。';try{G.shiftMonth(row.nextMonth,0);}catch{return '請揀水電煤嘅下次付款月份。';}}
+   }
+  }
+  return '';
+ }
+ root.QuickPlan={keys,seed,valid,cleanDraft,apply,details,detailError};
+ if(typeof module!=='undefined')module.exports=root.QuickPlan;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator,Q=root.QuickPlan,M=root.MoneyControls;
+ const labels={housing:'租金／供樓',management:'管理費',electricity:'電費',water:'水費',gas:'煤氣',mobile:'手機月費',internet:'上網月費',rates:'差餉／地租',insurance:'保險',other:'其他固定帳單'};
+ function create({read,base,currency,changed}){
+  const $=id=>document.getElementById(id),ranges={};
+  function moneyKey(type,id){return 'quick-detail-'+type+'-'+id;}
+  function rowNode(type,row,index){
+   const el=document.createElement('div');el.className='quick-detail-row';el.dataset.rowId=row.id;
+   const head=document.createElement('div');head.className='quick-row-head';
+   const title=document.createElement('strong');title.textContent=type==='income'?(row.kind==='monthly'?'每月額外收入':'Bonus／一次性收入')+' '+(index+1):labels[row.kind];head.append(title);
+   const remove=document.createElement('button');remove.type='button';remove.dataset.quickRemove=type;remove.dataset.rowId=row.id;remove.textContent='移除';remove.setAttribute('aria-label','移除'+title.textContent);head.append(remove);el.append(head);
+   function field(label,kind,key,options){
+    const wrap=document.createElement('label');wrap.className='quick-row-field';const span=document.createElement('span');span.textContent=label;wrap.append(span);
+    const input=document.createElement(kind==='select'?'select':'input');input.id='qd-'+type+'-'+row.id+'-'+key;input.dataset.quickDetail=type;input.dataset.rowId=row.id;input.dataset.field=key;
+    if(kind==='select'){for(const [value,text] of options){const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option);}}
+    else {input.type=kind;if(kind==='text'){input.maxLength=60;input.placeholder=type==='income'?'例如：兼職':'例如：醫療保險';}else{input.min='1900-01';input.max='2200-12';}}
+    wrap.append(input);el.append(wrap);
+   }
+   if(row.kind==='monthly'||row.kind==='insurance')field('名稱（可不填）','text','name');
+   const mount=document.createElement('div');el.append(mount);
+   const period=type==='income'?(row.kind==='monthly'?'每月金額':'到手金額'):G.utilityKeys.includes(row.kind)?'每期金額':row.kind==='rates'?'每季金額':row.kind==='insurance'?'保費金額':'每月金額';
+   M.mount(mount,{key:moneyKey(type,row.id),id:'qd-'+type+'-'+row.id+'-amount',rangeId:'qd-'+type+'-'+row.id+'-slider',label:period+' · '+currency(),defaultMax:type==='income'?100000:30000});
+   if(row.kind==='once')field('到手月份','month','month');
+   if(row.kind==='insurance')field('付款方式','select','frequency',[['annual','每年'],['monthly','每月']]);
+   if(G.utilityKeys.includes(row.kind)){
+    field('隔幾個月交一次？','select','every',G.paymentPeriods.map(value=>[value,value===1?'每月':`每 ${value} 個月`]));field('下次付款月份','month','nextMonth');
+    const note=document.createElement('p');note.className='help';note.textContent='按付款月份扣錢。下次付款預設首月，請按實際月份改。';el.append(note);
+   }
+   return el;
+  }
+  function renderList(type){
+   const rows=read()[type],container=$('quick-'+type+'-rows'),ids=new Set(rows.map(row=>row.id));
+   for(const el of [...container.children])if(!ids.has(el.dataset.rowId))el.remove();
+   for(const [index,row] of rows.entries()){
+    let el=[...container.children].find(node=>node.dataset.rowId===row.id);if(!el){el=rowNode(type,row,index);container.append(el);}
+    M.render(moneyKey(type,row.id),row.amount,ranges,currency());
+    for(const input of el.querySelectorAll('[data-quick-detail]'))if(document.activeElement!==input)input.value=row[input.dataset.field]??'';
+   }
+  }
+  function render(){
+   const extra=read();for(const type of ['income','costs'])renderList(type);
+   $('quick-income-empty').hidden=extra.income.length>0;$('quick-costs-empty').hidden=extra.costs.length>0;
+   const monthly=extra.income.filter(row=>row.kind==='monthly'),once=extra.income.filter(row=>row.kind==='once');
+   const sum=rows=>rows.every(row=>G.amountOK(row.amount))?currency()+' '+M.format(rows.reduce((n,row)=>n+G.cents(row.amount),0)/100):'待填';
+   $('quick-income-summary').textContent=`每月額外 ${sum(monthly)} · 一次性 ${sum(once)}`;
+   $('quick-add-monthly').disabled=monthly.length+base().state.incomeItems.length>=12;$('quick-add-once').disabled=once.length>=12;
+   const picker=$('quick-cost-kind'),available=Object.entries(labels).filter(([kind])=>kind==='insurance'?extra.costs.filter(row=>row.kind===kind).length<12:!extra.costs.some(row=>row.kind===kind));
+   const previous=picker.value;picker.replaceChildren();for(const [kind,label] of available){const option=document.createElement('option');option.value=kind;option.textContent=label;picker.append(option);}if(available.some(([kind])=>kind===previous))picker.value=previous;
+   $('quick-add-cost').disabled=!available.length;
+   const state=base().state;
+   let total='—';if(!Q.detailError(null,{},extra,'costs')){const projected=Q.apply({state,plan:{}},{}, {...extra,incomeUsed:false,costsUsed:true});total=currency()+' '+M.format(projected.state.billsMonthly);}
+   $('quick-costs-summary').textContent=`帳單合計：每月約 ${total}`;
+   $('quick-costs-note').textContent='水電煤按付款月份扣錢；差餉及年繳保費按月預留。';
+  }
+  function change(input){
+   let type=input.dataset.quickDetail,id=input.dataset.rowId,field=input.dataset.field,value=input.value;
+   if(input.dataset.moneyKey?.startsWith('quick-detail-')){const match=/^quick-detail-(income|costs)-(r\d+)$/.exec(input.dataset.moneyKey);if(!match)return false;[,type,id]=match;field='amount';value=M.read(input);}
+   if(!type)return false;const extra=read(),row=extra[type].find(row=>row.id===id);if(!row)return true;
+   row[field]=field==='every'?Number(value):value;
+   if(field==='amount')row.estimated=false;if(field==='nextMonth')row.confirmed=true;
+   extra[type+'Used']=true;changed();return true;
+  }
+  function add(type,kind){
+   const extra=read(),rows=extra[type];let n=1;while(rows.some(row=>row.id==='r'+n))n++;
+   const state=base().state,row={id:'r'+n,kind,amount:0};
+   if(kind==='once')row.month=state.endMonth;
+   if(kind==='insurance'){row.frequency='annual';row.name='';}
+   if(kind==='monthly')row.name='';
+   if(G.utilityKeys.includes(kind))Object.assign(row,{every:kind==='water'?4:2,nextMonth:state.startMonth,confirmed:false,estimated:true});
+   rows.push(row);extra[type+'Used']=true;changed();$('qd-'+type+'-'+row.id+'-amount').focus();
+  }
+  function click(button){
+   if(button.id==='quick-add-once'){if(!button.disabled)add('income','once');return true;}
+   if(button.id==='quick-add-monthly'){if(!button.disabled)add('income','monthly');return true;}
+   if(button.id==='quick-add-cost'){if(!button.disabled)add('costs',$('quick-cost-kind').value);return true;}
+   if(button.dataset.quickRemove){const extra=read(),type=button.dataset.quickRemove;extra[type]=extra[type].filter(row=>row.id!==button.dataset.rowId);extra[type+'Used']=true;changed();$(type==='income'?'quick-add-once':'quick-add-cost').focus();return true;}
+   if(button.dataset.expand?.startsWith('quick-detail-')){M.expand(button.dataset.expand,ranges);render();return true;}
+   return false;
+  }
+  return {render,change,click};
+ }
+ root.QuickDetails={create};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ function create({readPlan,applyPlan,hasSavedPlan,shared}){
+  const G=root.SavingsCalculator,Q=root.QuickPlan,M=root.MoneyControls,$=id=>document.getElementById(id),box=$('quickstart'),storageKey='savings-plan-quickstart-v1';
+  const steps=[
+   {key:'goal',title:'我要儲幾多？',help:'先揀一個目標，之後隨時可以改。',max:2000000,placeholder:'例如 300,000',presets:[[100000,'10萬'],[300000,'30萬'],[500000,'50萬'],[1000000,'100萬']]},
+   {key:'months',title:'我想用幾耐儲到？',help:'由下個月開始計，先揀一個大概期限。',presets:[[6,'半年'],[12,'1年'],[24,'2年'],[36,'3年']]},
+   {key:'startCash',title:'我而家已經儲咗幾多？',help:'填可以用嚟達標嘅錢，先扣起欠款同已預留嘅錢。',max:500000,placeholder:'未開始儲就填 0',zero:'我由 0 開始'},
+   {key:'income',title:'我每個月收到幾多錢？',help:'人工加其他固定收入，填實際入帳總額。Bonus 之後先加。',max:200000,placeholder:'例如 30,000',zero:'我暫時冇固定收入'},
+   {key:'spending',title:'我每個月日常使幾多？',help:'食飯、交通、購物等。租金同固定帳單留返下一題，唔使重複計。',max:100000,placeholder:'例如 5,000',zero:'呢項用 0 試算'},
+   {key:'bills',title:'我嘅固定帳單點計？',help:'租金、水電煤、保費等，填總額或者逐項加，揀一種就得。',max:100000,placeholder:'例如 8,000',zero:'我冇固定帳單'},
+   {key:'extra',optional:'income',title:'我仲有 Bonus／額外收入？',help:'只加未計入前面收入嘅錢，填到手金額。冇就略過。'}
+  ];
+  let snapshot=hasSavedPlan?readPlan():null,values=Q.seed(snapshot),extra=Q.details(snapshot),billMode=extra.costs.length?'detail':'total',step=0,view='full',ranges={},cached;
+  try{cached=Q.cleanDraft(JSON.parse(localStorage.getItem(storageKey)));}catch{}
+  const currency=()=>snapshot?.state.currency||'HKD';
+  const details=root.QuickDetails.create({read:()=>extra,base:()=>Q.apply(snapshot,values),currency,changed:()=>{$('quick-error').textContent='';paint();remember();}});
+  function remember(){try{localStorage.setItem(storageKey,JSON.stringify(view==='onboarding'?{version:3,view,step,values,details:extra,billMode}:{version:3,view}));$('quick-save-note').textContent='只存呢個瀏覽器，唔會上傳。';}catch{$('quick-save-note').textContent='目前未能儲存進度，關閉前請留意。';}}
+  function setView(next){view=next;document.body.dataset.view=next;box.hidden=next!=='onboarding';}
+  function showPlan(next='full',rememberChoice=true){setView(next);if(rememberChoice)remember();}
+  function amountChanged(input){
+   if(details.change(input))return;
+   const key=input.dataset.quickKey;if(!key&&!Q.keys.includes(input.dataset.moneyKey?.slice(6)))return;
+   if(key==='months')values.months=input.type==='range'?Number(input.value):input.value;
+   else values[input.dataset.moneyKey.slice(6)]=M.read(input);
+   $('quick-error').textContent='';paint();remember();
+  }
+  function paint(){
+   const current=steps[step];document.body.dataset.quickCompact=String(Boolean(current.optional)||current.key==='bills');$('quick-count').textContent=current.optional?'選填 1 / 1':`${step+1} / 6`;
+   $('quick-progress').setAttribute('aria-valuemax',String(steps.length));$('quick-progress').setAttribute('aria-valuenow',String(step+1));$('quick-progress-fill').style.width=((step+1)/steps.length*100)+'%';
+   $('quick-title').textContent=current.title;$('quick-help').textContent=current.help;
+   $('quick-back').hidden=step===0;$('quick-next').textContent=step===steps.length-1?'睇我嘅結果':current.optional?'繼續':'下一題';
+   $('quick-optional-skip').hidden=!current.optional;$('quick-optional-skip').textContent=extra.incomeUsed?'保留原本收入，睇結果':'略過，直接睇結果';
+   $('quick-zero').hidden=!current.zero;$('quick-zero').textContent=current.zero||'';
+   $('quick-detail-note').textContent=step===5&&billMode==='total'?'按月總額估算，唔包括上一題日常使費。':'';
+   if(snapshot&&step===3&&snapshot.state.incomeItems?.length>1)$('quick-detail-note').textContent='已帶入全部每月收入。改總額會取代原有收入拆項；想逐項改可以跳到完整工具。';
+   if(snapshot&&step===5&&billMode==='total')$('quick-detail-note').textContent='每月總額會取代拆項，按月估算。';
+   $('quick-bills-total').hidden=billMode!=='total';$('quick-bills-detail').hidden=billMode!=='detail';
+   for(const button of box.querySelectorAll('[data-quick-bill-mode]'))button.setAttribute('aria-pressed',String(button.dataset.quickBillMode===billMode));
+   for(const item of steps){
+    $('quick-panel-'+item.key).hidden=item.key!==current.key;
+    if(item.optional)continue;
+    if(item.key==='months'){
+     for(const id of ['quick-months','quick-months-slider'])if(document.activeElement!==$(id))$(id).value=Q.valid('months',values.months)?String(values.months):id.endsWith('slider')?'12':String(values.months);
+     const start=snapshot?.state.startMonth||G.defaultMonths().startMonth;
+     $('quick-until').textContent=Q.valid('months',values.months)?`${values.months} 個月，至 ${G.shiftMonth(start,Number(values.months)-1).replace('-','年')}月`:'';
+    }else {M.render('quick-'+item.key,values[item.key],ranges,currency());$('quick-money-'+item.key).querySelector('.money-head label').textContent='金額 · '+currency();}
+   }
+   if(current.optional||current.key==='bills'&&billMode==='detail')details.render();
+   for(const button of box.querySelectorAll('[data-quick-value]'))button.setAttribute('aria-pressed',String(Number(values[button.dataset.quickField])===Number(button.dataset.quickValue)));
+  }
+  function focusTitle(){$('quick-title').focus();}
+  function finish(full){
+   if(!full&&!Q.keys.every(key=>key==='bills'&&billMode==='detail'||Q.valid(key,values[key])))return;
+   if(document.activeElement?.matches('input'))document.activeElement.blur();
+   const chosen=JSON.parse(JSON.stringify(extra));chosen.costsUsed=billMode==='detail'&&(extra.costsUsed||!snapshot||snapshot.state.billSource==='legacy');
+   if(full)for(const type of ['income','costs'])if(Q.detailError(snapshot,values,chosen,type))chosen[type+'Used']=false;
+   applyPlan(Q.apply(snapshot,values,chosen,billMode));hasSavedPlan=true;showPlan(full?'full':'results');
+   history.replaceState(null,'',location.pathname+(full?'#inputs':'#goal'));
+   $(full?'inputs-title':'goal-title').focus();
+  }
+  function advance(){
+   if(step===steps.length-1){finish(false);return;}step++;
+   paint();remember();focusTitle();
+  }
+  function next(){
+   const current=steps[step];
+   if(current.optional||current.key==='bills'&&billMode==='detail'){
+    const type=current.optional||'costs',error=type==='costs'&&!extra.costs.length?'請加一項帳單，或者選「我冇固定帳單」。':type==='costs'||extra.incomeUsed?Q.detailError(snapshot,values,extra,type):'';
+    if(error){$('quick-error').textContent=error;const panel=$(type==='costs'?'quick-bills-detail':'quick-panel-'+current.key);(panel.querySelector('[aria-invalid=true]')||panel.querySelector('input')||$('quick-add-cost')).focus();return;}
+   }else if(!Q.valid(current.key,values[current.key])){$('quick-error').textContent=current.key==='months'?'請填 1 至 60 個月。':'請填 0 或以上嘅金額，最多兩位小數。';$(current.key==='months'?'quick-months':'quick-'+current.key).focus();return;}
+   advance();
+  }
+  for(const item of steps){
+   if(item.key==='months'||item.optional)continue;
+   M.mount($('quick-money-'+item.key),{key:'quick-'+item.key,id:'quick-'+item.key,rangeId:'quick-slider-'+item.key,label:'金額 · '+currency(),defaultMax:item.max,placeholder:item.placeholder});
+  }
+  for(const item of steps)if(item.presets){
+   const group=$('quick-presets-'+item.key);
+   for(const [value,label] of item.presets){const button=document.createElement('button');button.type='button';button.dataset.quickField=item.key;button.dataset.quickValue=value;button.textContent=label;group.appendChild(button);}
+  }
+  box.addEventListener('input',event=>{event.stopPropagation();if(event.target.matches('input'))amountChanged(event.target);});
+  box.addEventListener('change',event=>{event.stopPropagation();if(event.target.matches('select'))details.change(event.target);});
+  box.addEventListener('focusout',event=>{event.stopPropagation();if(event.target.dataset.moneyKey)paint();});
+  for(const name of ['pointerdown','keyup'])box.addEventListener(name,event=>{event.stopPropagation();if(event.target.matches('.money-control input[type=range]')&&(name==='pointerdown'||['Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)))amountChanged(event.target);});
+  box.addEventListener('click',event=>{
+   event.stopPropagation();const button=event.target.closest('button');if(!button)return;
+   if(details.click(button))return;
+   if(button.id==='quick-skip')finish(true);
+   else if(button.id==='quick-optional-skip'){extra.incomeUsed=false;extra.income=Q.details(snapshot).income;$('quick-income-rows').replaceChildren();$('quick-error').textContent='';advance();}
+   else if(button.dataset.quickBillMode){
+    const nextMode=button.dataset.quickBillMode;
+    if(nextMode==='total'&&billMode==='detail'&&extra.costs.length&&!Q.detailError(snapshot,values,extra,'costs'))values.bills=Q.apply(snapshot,values,{...extra,incomeUsed:false,costsUsed:true}).state.billsMonthly;
+    if(nextMode==='detail')extra.costsUsed=true;billMode=nextMode;$('quick-error').textContent='';paint();remember();
+   }
+   else if(button.id==='quick-back'){step=Math.max(0,step-1);$('quick-error').textContent='';paint();remember();focusTitle();}
+   else if(button.id==='quick-zero'){if(steps[step].key==='bills')billMode='total';values[steps[step].key]=0;$('quick-error').textContent='';paint();remember();next();}
+   else if(button.dataset.quickValue){values[button.dataset.quickField]=Number(button.dataset.quickValue);paint();remember();}
+   else if(button.dataset.expand){M.expand(button.dataset.expand,ranges);paint();}
+  });
+  $('quick-form').addEventListener('submit',event=>{event.preventDefault();event.stopPropagation();next();});
+  function start(){
+   snapshot=hasSavedPlan||shared()?readPlan():null;values=Q.seed(snapshot);extra=Q.details(snapshot);billMode=extra.costs.length?'detail':'total';$('quick-income-rows').replaceChildren();$('quick-costs-rows').replaceChildren();step=0;setView('onboarding');history.replaceState(null,'',location.pathname);paint();remember();focusTitle();
+  }
+  $('start-quick').addEventListener('click',start);
+  window.addEventListener('hashchange',()=>{if(location.hash==='#start')start();});
+  document.addEventListener('click',event=>{
+   const link=event.target.closest('a');
+   if(['#inputs','#housing-section','#income-section','#oneoffs-section','#tax-section','#insurance-section'].includes(link?.getAttribute('href')))showPlan('full',!shared());
+   const action=event.target.closest('[data-add-from-result]');if(!action)return;
+   showPlan('full',!shared());const income=action.dataset.addFromResult==='income',add=$(income?'add-income':'add-oneoff');
+   if(add.disabled){$(income?'incomes-summary':'oneoffs-summary').scrollIntoView({block:'start'});return;}
+   add.click();
+   if(!income){const input=$('oneoffs').lastElementChild?.querySelector('input[data-money-key]');input?.focus();}
+  });
+  if(shared())setView('results');
+  else if(location.hash==='#start'){setView('onboarding');history.replaceState(null,'',location.pathname);}
+  else if(cached?.view==='onboarding'){values=cached.values;extra=cached.details||Q.details(snapshot);billMode=cached.billMode||(extra.costsUsed?'detail':snapshot&&G.cents(cached.values.bills)!==G.cents(snapshot.state.billsMonthly)?'total':billMode);step=cached.step;setView('onboarding');}
+  else if(hasSavedPlan)setView(cached?.view||'full');
+  else setView('onboarding');
+  paint();
+  return {showPlan};
+ }
+ root.PlannerQuickstart={create};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>'use strict';
+const G=SavingsCalculator,B=CalculatorBills,I=CalculatorIncome,C=CalculatorCosts,$=id=>document.getElementById(id),storageKey='savings-plan-public-v1';
+const controls=[
+ {key:'goal',id:'target',rangeId:'goal-slider',label:'我要儲幾多？',defaultMax:2000000,placeholder:'例如 300,000'},
+ {key:'startCash',id:'startCash',rangeId:'cash-slider',label:'我而家已經儲咗',defaultMax:500000,placeholder:'例如 0',hint:'填扣咗欠款同預留款後，可以用嚟達標嘅錢。'},
+ {key:'monthlyNet',id:'plan-monthly',rangeId:'income-slider',label:'如果我每個月再多賺',defaultMax:100000,hint:'只係試下：填扣咗新增稅金後，每月多賺嘅錢。'},
+ {key:'spendingMonthly',id:'spendingMonthly',rangeId:'spending-slider',label:'我每個月日常使費',defaultMax:100000,placeholder:'例如 5,000',hint:'食飯、交通、購物等。租金、帳單同稅金喺下面填，唔使重複計。'},
+ {key:'taxTotal',id:'taxTotal',rangeId:'tax-slider',label:'我要另外留幾多錢交稅？',defaultMax:300000,placeholder:'例如 0',hint:'填成段時間要留起嘅稅金，會喺第一個月扣起。請自行估算，唔會自動計稅。'},
+ {key:'onceNet',id:'plan-once',rangeId:'once-slider',label:'如果我到時再有一筆錢',defaultMax:500000,hint:'只係試下：填扣咗新增稅金後嘅金額。'}
+];
+let quickstart,onboardingPending=false;
+let state=C.initialise(I.initialise(B.setExample(G.example()))),plan={monthlyNet:0,onceNet:0},ranges={},mode='example',selected=Infinity,chartMode='balance',base,result,report,eta,trajectory;
+const safe=value=>Number.isFinite(Number(value))?Math.max(0,Math.min(1e8,Number(value))):0;
+function readSaved(){
+ const saved=JSON.parse(localStorage.getItem(storageKey));if(saved?.state?.version!==1)return;
+ const candidate=saved.state,clean=G.blank();
+ for(const key of G.fields)clean[key]=['string','number'].includes(typeof candidate[key])?candidate[key]:'';
+ for(const key of ['startMonth','endMonth'])clean[key]=typeof candidate[key]==='string'?candidate[key]:'';
+ clean.currency=G.currencies.includes(candidate.currency)?candidate.currency:'HKD';
+ clean.oneOffs=Array.isArray(candidate.oneOffs)?candidate.oneOffs.slice(0,12).filter(row=>row&&typeof row==='object').map(row=>({amount:['string','number'].includes(typeof row.amount)?row.amount:0,month:typeof row.month==='string'?row.month:''})):[];
+ state=C.initialise(I.initialise(B.initialise(clean,candidate.billItems,candidate.billSource),candidate.incomeItems),candidate);
+ plan=Object.fromEntries(['monthlyNet','onceNet'].map(key=>[key,['number','string'].includes(typeof saved.plan?.[key])?saved.plan[key]:0]));mode=saved.mode==='example'?'example':'custom';
+ if(saved.ranges&&typeof saved.ranges==='object')for(const [key,value] of Object.entries(saved.ranges))if(/^(goal|startCash|monthlyIncome|otherMonthly|monthlyNet|spendingMonthly|taxTotal|onceNet|oneoff-\d+|bill-[a-z]+|income-[a-z][a-z0-9]{0,31}|insurance-[a-z][a-z0-9]{0,31})$/.test(key)&&Number.isFinite(Number(value)))ranges[key]=safe(value);
+ if(candidate.ratesQuarterly===undefined&&ranges['bill-rates'])ranges['bill-rates']=safe(ranges['bill-rates']*3);
+ if(ranges['bill-insurance']){ranges['insurance-legacy']=ranges['bill-insurance'];delete ranges['bill-insurance'];}
+ return true;
+}
+let hasSavedPlan=false;try{hasSavedPlan=Boolean(readSaved());}catch{}
+let savedBeforeShared=null,sharedDraft=false;
+function releaseInputFocus(){const input=document.activeElement;if(input?.matches('input,select'))input.blur();}
+function loadShared(hash){
+ const incoming=PlannerShare.fromHash(hash);if(!incoming)return false;releaseInputFocus();
+ try{savedBeforeShared=localStorage.getItem(storageKey);}catch{savedBeforeShared=null;}
+ state=C.initialise(I.initialise(B.initialise(incoming.state,incoming.state.billItems,'custom'),incoming.state.incomeItems),incoming.state);plan=incoming.plan;mode='custom';sharedDraft=true;selected=Infinity;return true;
+}
+try{loadShared(location.hash);}catch{$('share-import-note').textContent='分享連結無效，已保留你原有設定。';}
+window.addEventListener('hashchange',()=>{if(!location.hash.startsWith('#plan='))return;try{if(loadShared(location.hash)){onboardingPending=false;quickstart?.showPlan('results',false);render();}}catch{$('share-import-note').textContent='分享連結無效，已保留你原有設定。';}});
+
+const visuals=SavingsVisuals.create($('plan-visuals'));
+const amount=(minor,d=2)=>new Intl.NumberFormat('en-HK',{minimumFractionDigits:d,maximumFractionDigits:d}).format(minor/100);
+const money=(minor,d=2)=>state.currency+' '+amount(minor,d);
+const monthText=month=>Number(month.slice(0,4))+'年'+Number(month.slice(5))+'月';
+const activePlan=()=>plan.monthlyNet>0||plan.onceNet>0;
+function sync(input,value){if(document.activeElement!==input)input.value=String(value);}
+for(const config of controls)MoneyControls.mount($('control-'+config.key),config);
+for(const config of B.definitions){
+ const slot=document.createElement('div');slot.id='control-bill-'+config.key;$('bill-controls').appendChild(slot);
+ MoneyControls.mount(slot,{...config,hint:config.hint,key:'bill-'+config.key,id:'bill-'+config.key,rangeId:'bill-slider-'+config.key});
+}
+PaymentControls.mount();
+function mountIncomes(){
+ const root=$('incomes'),ids=new Set(state.incomeItems.map(row=>row.id));
+ for(const node of [...root.children])if(!ids.has(node.dataset.incomeId))node.remove();
+ state.incomeItems.forEach((row,i)=>{
+  let node=[...root.children].find(node=>node.dataset.incomeId===row.id);
+  const config=I.control(row);
+  if(!node){
+   node=document.createElement('div');node.className='income-row';node.dataset.incomeId=row.id;
+   node.innerHTML=`<div class="income-head"><div class="income-name-field"><label class="name-label" for="income-name-${row.id}">名稱</label><input class="income-name" id="income-name-${row.id}" data-income-name="${row.id}" type="text" maxlength="60" autocomplete="off"></div><button type="button" data-remove-income="${row.id}">移除</button></div><div id="control-${config.key}"></div>`;
+   root.appendChild(node);MoneyControls.mount($('control-'+config.key),{...config,label:'我每個月收幾多？'});
+  }
+  const name=$('income-name-'+row.id),label=row.name.trim()||'每月收入 '+(i+1);
+  sync(name,row.name);name.placeholder='收入名稱，例如薪金／兼職';name.setAttribute('aria-label','每月收入 '+(i+1)+' 名稱');
+  node.querySelector('[data-remove-income]').setAttribute('aria-label','移除每月收入 '+(i+1));
+  MoneyControls.render(config.key,row.amount,ranges,state.currency);
+  $(config.id).setAttribute('aria-label',label+'，每月精確金額');$(config.rangeId).setAttribute('aria-label',label+'，每月金額');
+  node.querySelector('[data-expand]').setAttribute('aria-label','擴大'+label+' slider 範圍');
+ });
+ $('incomes-summary').textContent=`02　我每個月收入（${state.incomeItems.length}筆）`;
+ $('incomes-empty').hidden=state.incomeItems.length>0;$('add-income').disabled=state.incomeItems.length>=12;
+}
+function renderSubtotals(){
+ const sum=values=>values.every(G.amountOK)?values.reduce((n,value)=>n+G.cents(value),0):NaN;
+ const show=(id,value)=>$(id).textContent=Number.isFinite(value)?money(value):'—';
+ show('subtotal-start',G.amountOK(state.goal)&&G.amountOK(state.startCash)?Math.max(0,G.cents(state.goal)-G.cents(state.startCash)):NaN);
+ const recurring=sum(state.incomeItems.map(row=>row.amount)),trial=sum([plan.monthlyNet]);
+ show('subtotal-income',recurring+trial);
+ $('income-subtotal-note').textContent=Number.isFinite(recurring+trial)?`固定收入 ${money(recurring)}${trial?' ＋ 未確認試算 '+money(trial):'；未計 Bonus'}。稅金喺下方另計。`:'';
+ let bonus=NaN,excluded=0;
+ try{
+  const months=G.monthRange(state.startMonth,state.endMonth);
+  if(state.oneOffs.every(row=>G.amountOK(row.amount)&&(!Number(row.amount)||G.shiftMonth(row.month,0)))){
+   bonus=state.oneOffs.filter(row=>months.includes(row.month)).reduce((n,row)=>n+G.cents(row.amount),0);
+   excluded=state.oneOffs.filter(row=>Number(row.amount)>0&&!months.includes(row.month)).length;
+  }
+ }catch{}
+ show('subtotal-bonus',bonus);$('bonus-subtotal-note').textContent=Number.isFinite(bonus)?(excluded?`${excluded} 筆喺期間外，未計入呢個小計。`:'只計所選期間，稅金另計。'):'';
+ show('subtotal-spending',sum([state.spendingMonthly]));show('subtotal-tax',sum([state.taxTotal]));show('subtotal-once',sum([plan.onceNet]));
+}
+function mountOneoffs(){
+ const root=$('oneoffs');
+ if(root.children.length!==state.oneOffs.length){
+  root.replaceChildren();
+  state.oneOffs.forEach((_,i)=>{
+   const row=document.createElement('div');row.className='oneoff';
+   row.innerHTML=`<div class="oneoff-head"><span>Bonus／一次性收入 ${i+1}</span><button type="button" data-remove="${i}" aria-label="移除一次性收入${i+1}">移除</button></div><div id="control-oneoff-${i}"></div><div class="bonus-date"><label for="oneoff-month-${i}">入帳月份</label><input id="oneoff-month-${i}" data-oneoff="${i}" type="month" min="1900-01" max="2200-12"></div>`;
+   root.appendChild(row);
+   MoneyControls.mount($('control-oneoff-'+i),{key:'oneoff-'+i,id:'oneoff-amount-'+i,rangeId:'bonus-slider-'+i,label:'金額',defaultMax:500000});
+  });
+ }
+ state.oneOffs.forEach((row,i)=>{MoneyControls.render('oneoff-'+i,row.amount,ranges,state.currency);sync($('oneoff-month-'+i),row.month);});
+ $('oneoffs-summary').textContent=`03　我嘅 Bonus／額外一筆（${state.oneOffs.length}筆）`;
+ $('oneoffs-empty').hidden=state.oneOffs.length>0;$('add-oneoff').disabled=state.oneOffs.length>=12;
+}
+function syncControls(){
+ for(const key of ['currency','startMonth','endMonth'])sync($(key),state[key]);
+ for(const config of controls)MoneyControls.render(config.key,G.fields.includes(config.key)?state[config.key]:plan[config.key],ranges,state.currency);
+ for(const config of B.definitions)MoneyControls.render('bill-'+config.key,config.key==='rates'?state.ratesQuarterly:G.utilityKeys.includes(config.key)?state.utilityPayments[config.key].amount:state.billItems[config.key],ranges,state.currency);
+ $('billsMonthly').textContent='—';
+ $('bill-migration-note').textContent=state.billSource==='legacy'?'帳單總額喺「其他帳單／未拆項總額」。填租金等分項時，請將呢筆改成剩餘未分配金額，避免重複計。':'水電煤按付款月扣整筆；其他項目按月支付／預留。';
+ $('apply-example-bills').hidden=state.billSource!=='legacy'||G.cents(state.billsMonthly)!==G.billTotal(B.example());
+ mountIncomes();mountOneoffs();CostControls.render(state,ranges);PaymentControls.render(state);renderSubtotals();
+ try{const months=G.monthRange(state.startMonth,state.endMonth).length;sync($('horizon-slider'),months);$('horizon-value').textContent=months+'個月';}catch{$('horizon-value').textContent='請揀有效月份';}
+ try{G.shiftMonth(state.startMonth,0);$('horizon-slider').disabled=false;}catch{$('horizon-slider').disabled=true;}
+}
+function showMonth(){
+ if(!trajectory)return;
+ selected=Math.max(0,Math.min(selected,trajectory.rows.length-1));const row=trajectory.rows[selected];
+ $('selected-month').textContent=monthText(row.month);$('chart-month').max=String(trajectory.rows.length-1);sync($('chart-month'),selected);
+ $('chart-month').disabled=trajectory.rows.length===1;$('chart-month').setAttribute('aria-valuetext',monthText(row.month));
+ $('month-detail').innerHTML=`<div class="month-detail-main"><span>月末淨儲蓄</span><strong>${money(row.balance)}</strong></div><dl class="month-stats"><div><dt>入儲蓄</dt><dd>${amount(row.savingsIn)}</dd></div><div><dt>帳單及預留</dt><dd>${amount(row.bills)}</dd></div><div><dt>稅金預留</dt><dd>${amount(row.tax)}</dd></div></dl>`;
+ const due=G.utilityKeys.filter(key=>G.paymentDue(state.utilityPayments[key],row.month));
+ const payments=due.map(key=>({electricity:'電費',water:'水費',gas:'煤氣'}[key])+' '+money(G.cents(state.utilityPayments[key].amount))).join(' · ');
+ const line=document.createElement('p');line.className='help';line.textContent=(row.month>state.endMonth?'期限後預測 · ':'')+(payments||'本月無安排水電煤付款。');$('month-detail').appendChild(line);
+ $('month-detail').setAttribute('aria-label',monthText(row.month)+'，全部金額以'+state.currency+'計');SavingsChart.select($('chart'),selected);
+ document.querySelectorAll('#month-rows tr').forEach((row,i)=>row.setAttribute('aria-selected',String(i===selected)));
+}
+function renderChart(){
+ if(!result)return;
+ const drawing=SavingsChart.draw({result:{rows:trajectory.rows},base:{rows:trajectory.baselineRows},goal:G.cents(state.goal),mode:chartMode,currency:state.currency,deadlineMonth:state.endMonth,achievedMonth:eta.month});
+ $('chart').innerHTML=drawing.svg;$('chart-legend').innerHTML=drawing.legend;
+ $('chart-period').textContent=state.startMonth.replace('-','/')+' — '+trajectory.rows.at(-1).month.replace('-','/');
+ $('chart-horizon-note').textContent=eta.reached?`原定 ${monthText(state.endMonth)}；預計 ${monthText(eta.month)} 首次儲夠。${trajectory.extended?' 淡色區係期限後預測，按目前固定收支延續。':''}`:`預測至 ${monthText(eta.limitMonth)}，仍未達標。可調整收入或支出再試。`;
+ document.querySelectorAll('[data-chart-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chartMode===chartMode)));
+}
+function persist(){
+ if(onboardingPending)return;
+ if(sharedDraft){$('save-status').textContent='分享計劃試玩中；按「用呢份做我嘅計劃」先會取代本機設定。';return;}
+ try{localStorage.setItem(storageKey,JSON.stringify({state,plan,mode,ranges}));$('save-status').textContent='更改已存喺呢個瀏覽器。';}catch{$('save-status').textContent='目前未能儲存；關閉前請留意。';}
+}
+function clearResult(){
+ base=result=report=eta=trajectory=null;visuals.clear();$('billsMonthly').textContent='—';$('visual-period').textContent='填齊數字後顯示分配同進度。';
+ for(const id of ['ending','shortfall','eta','total-in','total-bills','total-tax','final-balance','dock-ending','dock-eta'])$(id).textContent='—';
+ for(const id of ['chart-horizon-note','goal-line','baseline-note','assumption-note','month-detail','timing-note','income-note','eta-note','plan-summary','spending-limit'])$(id).textContent='';
+ $('month-rows').replaceChildren();$('paths').hidden=true;$('try-once').disabled=$('try-monthly').disabled=true;
+ $('chart').innerHTML='<p class="chart-empty">填齊數字後，呢度會顯示儲蓄走勢。</p>';
+ $('chart-legend').replaceChildren();$('chart-period').textContent='';$('selected-month').textContent='選擇月份';
+ $('month-detail').removeAttribute('aria-label');$('chart-month').disabled=true;$('chart-month').value='0';$('chart-month').removeAttribute('aria-valuetext');
+ $('gap-label').textContent='仲差';$('dock-gap').textContent='填入條件開始試算';$('progress-fill').style.width='0%';$('progress').setAttribute('aria-valuenow','0');
+}
+function render(){
+ $('shared-plan-banner').hidden=!sharedDraft;
+ syncControls();$('example-status').textContent=sharedDraft?'分享計劃 · 試玩中':mode==='example'?'虛構示例，可替換':'你的本機計劃';
+ $('simple-plan-note').textContent=state.billSource==='legacy'?'快速估算：帳單按月總額計。Bonus 同稅金只計已填項目。':'';
+ $('result-label').textContent=activePlan()?'加埋試算，到時我會有 · '+state.currency:'到時我會有 · '+state.currency;
+ $('reset-plan').hidden=!activePlan();const errors=[...G.validate(state),...G.validatePlan(plan)];$('status').textContent=errors.join(' ');
+ if(errors.length){clearResult();persist();return;}
+ base=G.forecast(state);result=G.forecast(state,plan);report=G.targetReport(state,result);trajectory=G.projectToGoal(state,plan);eta=trajectory.eta;
+ $('ending').textContent=amount(result.ending);$('goal-line').textContent=`到 ${monthText(state.endMonth)}，我要儲 ${money(G.cents(state.goal),0)}`;
+ $('gap-label').textContent=report.shortfall?'仲差':report.surplus?'超出目標':'剛好達標';$('shortfall').textContent=money(report.shortfall||report.surplus);
+ const percent=G.cents(state.goal)>0?Math.max(0,Math.min(100,result.ending/G.cents(state.goal)*100)):(result.ending>=0?100:0);
+ $('progress-fill').style.width=percent+'%';$('progress').setAttribute('aria-valuenow',percent.toFixed(1));
+ $('eta').textContent=eta.reached?monthText(eta.month):'預測期內未達標';
+ $('eta-note').textContent=`按月末結餘估算，最多10年。固定收支延續，Bonus 只計一次，不計回報／通脹。${eta.reached?'':'預測至'+monthText(eta.limitMonth)+'。'}${eta.reached&&eta.month<=state.endMonth&&report.shortfall?'首次達標後會回落，目標月結餘仍不足。':''}`;
+ $('plan-summary').textContent=report.shortfall?'想準時儲夠，我可以揀一個方法試下：':'按呢個計劃，我可以準時儲夠。';
+ $('paths').hidden=report.shortfall===0;
+ $('try-once').disabled=report.shortfall===0||G.cents(plan.onceNet)+report.onceNeeded>1e10;
+ $('try-monthly').disabled=report.shortfall===0||G.cents(plan.monthlyNet)+report.monthlyNeeded>1e10;
+ $('once-needed').textContent=money(report.onceNeeded);$('monthly-needed').textContent=money(report.monthlyNeeded);
+ $('spending-limit').textContent=report.shortfall?(report.spendingOnlyShortfall?`就算我日常使費減到0，仲差 ${money(report.spendingOnlyShortfall)}。`:`如果只慳使費，我每月要再少使 ${money(report.monthlyNeeded)}。`):'';
+ $('baseline-note').textContent=activePlan()?`未加額外收入時，我會有 ${money(base.ending)}。而家試緊每月多 ${money(G.cents(plan.monthlyNet))}，到時再多 ${money(G.cents(plan.onceNet))}；呢啲錢未確認。`:`呢段時間，我會再儲到 ${money(result.growth)}。`;
+ $('assumption-note').textContent=`已扣消費、所選月份帳單及稅金預留 ${money(result.totalTax,0)}。${G.utilityKeys.some(key=>Number(state.utilityPayments[key].amount)>0&&!state.utilityPayments[key].confirmed)?'含未核實水電煤付款月。':''}期末後帳單未扣；稅額非評稅結果。`;
+ $('billsMonthly').textContent=money(result.totalBills);
+ $('bills-subtotal-label').textContent='呢段時間我要交／留起';
+ $('month-rows').innerHTML=result.rows.map((row,i)=>`<tr aria-selected="${i===selected}"><td><button type="button" data-month="${i}" aria-label="${row.month} 分角明細">${i===0||row.month.endsWith('-01')?'<span class="year">'+row.month.slice(0,4)+'</span>':''}${Number(row.month.slice(5))}月</button></td><td>${amount(row.savingsIn,0)}</td><td>${amount(row.bills,0)}</td><td>${row.tax?amount(row.tax,0):'—'}</td><td>${amount(row.balance,0)}</td></tr>`).join('');
+ $('total-in').textContent=amount(result.totalSavingsIn,0);$('total-bills').textContent=amount(result.totalBills,0);$('total-tax').textContent=amount(result.totalTax,0);$('final-balance').textContent=amount(result.ending,0);
+ $('table-note').textContent=`${state.currency}，四捨五入至元；點月份睇分角。入儲蓄已先扣個人消費。`;
+ $('timing-note').textContent=`水電煤按所選付款月扣整筆；差餉／保險仍按月預留。${monthText(state.startMonth)}先預留全期稅金。`;
+ $('income-note').textContent=`原定期間 ${result.rows.length} 個月；圖表共 ${trajectory.rows.length} 個月。${result.excludedOneOffs?'有 '+result.excludedOneOffs+' 筆一次性收入喺原定期限之外，未計入目標月結餘；延伸預測只喺實際入帳月計入。':''}${plan.onceNet?'新增一次性淨收入放喺目標月。':''}`;
+ $('dock-ending').textContent=money(result.ending);$('dock-gap').textContent=report.shortfall?'距離目標仲差 '+money(report.shortfall):'目標月份已足夠';$('dock-eta').textContent=eta.reached?monthText(eta.month):'預測期內未達標';
+ renderChart();showMonth();visuals.render(state,result);$('visual-period').textContent=state.startMonth.replace('-','/')+' — '+state.endMonth.replace('-','/')+' · '+state.currency+' · 依輸入條件試算';persist();
+}
+function updateInput(input){
+ if(input.id==='chart-month'){if(result){selected=Number(input.value);showMonth();}return;}
+ if(input.id==='horizon-slider'){try{state.endMonth=G.shiftMonth(state.startMonth,Number(input.value)-1);mode='custom';}catch{return;}}
+ else if(input.dataset.moneyKey){
+  const key=input.dataset.moneyKey,value=MoneyControls.read(input);
+  const income=I.findByControl(state,key);
+  if(income){I.update(state,income.id,value);mode='custom';}
+  else if(G.fields.includes(key)){state[key]=value;mode='custom';}
+  else if(key==='monthlyNet'||key==='onceNet')plan[key]=value;
+  else if(key==='bill-rates'){C.updateRates(state,value);mode='custom';}
+  else if(key.startsWith('insurance-')){C.update(state,key.slice(10),'amount',value);mode='custom';}
+  else if(key.startsWith('bill-')&&G.utilityKeys.includes(key.slice(5))){C.updateUtility(state,key.slice(5),'amount',value);mode='custom';}
+  else if(key.startsWith('bill-')){B.update(state,key.slice(5),value);mode='custom';}
+  else if(key.startsWith('oneoff-')){const row=state.oneOffs[Number(key.slice(7))];if(!row)return;row.amount=value;mode='custom';}
+ }
+ else if(input.dataset.utility){C.updateUtility(state,input.dataset.utility,input.dataset.paymentField,input.value);mode='custom';}
+ else if(input.dataset.insuranceName){C.update(state,input.dataset.insuranceName,'name',input.value.slice(0,60));mode='custom';}
+ else if(input.dataset.insuranceFrequency){C.update(state,input.dataset.insuranceFrequency,'frequency',input.value);mode='custom';}
+ else if(input.dataset.incomeName){const row=state.incomeItems.find(row=>row.id===input.dataset.incomeName);if(!row)return;row.name=input.value.slice(0,60);mode='custom';}
+ else if(input.dataset.field){state[input.dataset.field]=input.value;mode='custom';}
+ else if(input.dataset.oneoff!==undefined){state.oneOffs[Number(input.dataset.oneoff)].month=input.value;mode='custom';}
+ else return;
+ render();
+}
+document.addEventListener('input',event=>updateInput(event.target));document.addEventListener('change',event=>updateInput(event.target));
+// Choosing the zero end of an untouched blank field must also commit that zero.
+document.addEventListener('pointerdown',event=>{if(event.target.matches('.money-control input[type=range]'))updateInput(event.target);});
+document.addEventListener('keyup',event=>{if(event.target.matches('.money-control input[type=range]')&&['Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))updateInput(event.target);});
+document.addEventListener('focusout',event=>{if(event.target.dataset.moneyKey){if(event.target.type==='text'){const raw=event.target.value,value=MoneyControls.parse(raw);event.target.value=value!==''&&Number.isFinite(value)?MoneyControls.format(value):raw;}render();}});
+document.addEventListener('click',event=>{
+ const hit=event.target.closest('[data-chart-month]');if(hit&&result){selected=Number(hit.dataset.chartMonth);showMonth();return;}
+ const button=event.target.closest('button');if(!button)return;
+ if(button.dataset.month!==undefined){selected=Number(button.dataset.month);showMonth();return;}
+ if(button.dataset.chartMode){chartMode=button.dataset.chartMode;renderChart();showMonth();return;}
+ if(button.dataset.expand){MoneyControls.expand(button.dataset.expand,ranges);syncControls();persist();return;}
+ if(button.dataset.goal){state.goal=Number(button.dataset.goal);mode='custom';render();return;}
+ if(button.id==='keep-shared-plan'){releaseInputFocus();sharedDraft=false;history.replaceState(null,'',location.pathname+'#goal');render();return;}
+ if(button.id==='restore-local-plan'){releaseInputFocus();sharedDraft=false;state=C.initialise(I.initialise(B.setExample(G.example())));plan={monthlyNet:0,onceNet:0};ranges={};mode='example';try{if(savedBeforeShared){localStorage.setItem(storageKey,savedBeforeShared);readSaved();}else localStorage.removeItem(storageKey);}catch{}history.replaceState(null,'',location.pathname+'#goal');render();return;}
+ if(button.id==='share-plan'){openShare();return;}
+ if(button.id==='copy-share'){copyShare();return;}
+ if(button.id==='close-share'){ $('share-panel').hidden=true;return;}
+ if(button.id==='apply-example-bills'&&state.billSource==='legacy'&&G.cents(state.billsMonthly)===G.billTotal(B.example())){B.setExample(state);C.initialise(state);}
+ else if(button.id==='load-example'){releaseInputFocus();sharedDraft=false;state=C.initialise(I.initialise(B.setExample(G.example())));plan={monthlyNet:0,onceNet:0};ranges={};mode='example';selected=Infinity;}
+ else if(button.id==='clear-inputs'){releaseInputFocus();sharedDraft=false;state=C.initialise(I.initialise(B.setEmpty(G.blank())));plan={monthlyNet:0,onceNet:0};ranges={};mode='custom';selected=0;}
+ else if(button.id==='try-once'&&report)plan.onceNet=(G.cents(plan.onceNet)+report.onceNeeded)/100;
+ else if(button.id==='try-monthly'&&report)plan.monthlyNet=(G.cents(plan.monthlyNet)+report.monthlyNeeded)/100;
+ else if(button.id==='reset-plan')plan={monthlyNet:0,onceNet:0};
+ else if(button.id==='add-insurance'){const row=C.add(state);if(row){mode='custom';render();$('insurance-name-'+row.id).focus();}return;}
+ else if(button.dataset.removeInsurance){delete ranges['insurance-'+button.dataset.removeInsurance];C.remove(state,button.dataset.removeInsurance);mode='custom';render();$('add-insurance').focus();return;}
+ else if(button.id==='add-income'){const row=I.add(state);if(row){mode='custom';render();$('income-name-'+row.id).focus();}return;}
+ else if(button.dataset.removeIncome){const row=state.incomeItems.find(row=>row.id===button.dataset.removeIncome);if(!row)return;delete ranges[I.control(row).key];I.remove(state,row.id);mode='custom';render();$('add-income').focus();return;}
+ else if(button.id==='add-oneoff'&&state.oneOffs.length<12){state.oneOffs.push({amount:0,month:state.endMonth});mode='custom';}
+ else if(button.dataset.remove!==undefined){state.oneOffs.splice(Number(button.dataset.remove),1);$('oneoffs').replaceChildren();mode='custom';}
+ else return;
+ render();
+});
+onboardingPending=!hasSavedPlan&&!sharedDraft;
+render();
+quickstart=PlannerQuickstart.create({
+ hasSavedPlan,shared:()=>sharedDraft,
+ readPlan:()=>({state:JSON.parse(JSON.stringify(state)),plan:{...plan}}),
+ applyPlan:incoming=>{releaseInputFocus();onboardingPending=false;state=incoming.state;plan=incoming.plan;mode='custom';ranges={};selected=Infinity;render();}
+});
+
+function openShare(){
+ try{
+  const url=PlannerShare.url(state,plan,location.protocol==='file:'?PlannerConfig.publicUrl:location.origin+location.pathname);
+  $('share-link').value=url;$('share-panel').hidden=false;$('share-copy-status').textContent='';$('share-link').focus();$('share-link').select();
+ }catch{$('share-import-note').textContent='填齊有效金額同月份，先可以分享計劃。';}
+}
+async function copyShare(){
+ try{await navigator.clipboard.writeText($('share-link').value);$('share-copy-status').textContent='連結已複製。';}
+ catch{$('share-link').focus();$('share-link').select();$('share-copy-status').textContent='請長按或用複製快捷鍵，複製已選取嘅連結。';}
+}
+</script>
+<script>(function(){
+ 'use strict';
+ const status=document.getElementById('offline-status');
+ if(location.protocol==='file:'){
+  status.textContent='離線檔案使用中；設定只存呢個瀏覽器／檔案位置。';
+  document.getElementById('download-offline').hidden=true;return;
+ }
+ if(!('serviceWorker' in navigator)){status.textContent='可下載單一 HTML 離線使用；此瀏覽器未支援離線快取。';return;}
+ navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(()=>navigator.serviceWorker.ready).then(()=>{
+  status.textContent='已備妥離線使用；首次開啟及下載網站檔案需要網絡。';
+ }).catch(()=>{status.textContent='可下載離線版；目前未能建立離線快取。';});
+})();
+</script></body></html>

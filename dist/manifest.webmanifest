@@ -1,0 +1,1 @@
+{"name": "存款目標計算器", "short_name": "存款目標", "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#f7f4ee", "theme_color": "#f7f4ee", "icons": [{"src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}]}

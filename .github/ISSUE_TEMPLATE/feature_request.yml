@@ -1,0 +1,15 @@
+name: Feature or usability idea
+description: Help make a savings plan easier to understand.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to work out?
+      description: Describe the user problem without sharing your actual finances.
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: What would make it easier?
+      description: A short example with invented figures is helpful.

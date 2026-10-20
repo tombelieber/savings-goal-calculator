@@ -1,0 +1,25 @@
+{
+  "name": "savings-goal-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "node --test model.test.cjs share.test.cjs app.test.cjs privacy.test.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  },
+  "description": "A browser-local savings goal planner with offline use, dated bills and shareable scenarios.",
+  "license": "MIT",
+  "homepage": "https://savings-goal-calculator-9eo.pages.dev/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tombelieber/savings-goal-calculator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tombelieber/savings-goal-calculator/issues"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
