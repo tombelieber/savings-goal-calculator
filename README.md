@@ -1,22 +1,22 @@
 <div align="center">
   <img src="dist/icon.svg" alt="Savings Goal Calculator" width="76" />
   <h1>存款目標計算器</h1>
-  <p><strong>Know when you'll reach your savings goal.</strong></p>
+  <p><strong>Know what to save each month. Leave with a payday plan.</strong></p>
   <p>A small savings planner that keeps your numbers in your browser.</p>
   <p><a href="https://savings-goal-calculator-9eo.pages.dev/#start"><strong>Try the planner</strong></a> · <a href="https://savings-goal-calculator-9eo.pages.dev/offline.zip">Download offline</a> · <a href="README.zh-HK.md">廣東話</a></p>
   <p>No signup · No financial-data uploads · MIT licensed</p>
 </div>
 
-**“Can I save enough by next April?”** Set a target, add your income and spending,
-and see your projected balance, shortfall and estimated goal date. Move a slider
-to try a different plan.
+**“How much should I save each month?”** Set a target, add your income and spending,
+and see the monthly saving you need, what your budget allows, and the gap. A payday
+plan shows what to keep for spending and bills, and what can actually go into savings.
 
 The interface is in **Traditional Chinese / Cantonese**, designed for phones.
 Hong Kong bill categories are built in; six display currencies are supported.
 
 <p align="center">
   <img src="docs/images/bills-mobile.jpg" alt="Choose one monthly bills total or enter a breakdown directly" width="270" />
-  <img src="docs/images/goal-mobile.jpg" alt="Interactive savings projection with a deadline and estimated goal date, using fictional 2099 data" width="270" />
+  <img src="docs/images/goal-mobile.jpg" alt="Monthly savings target and payday allocation, using fictional 2099 data" width="270" />
 </p>
 
 *Real product screens. All amounts are invented; the projection uses 2099 dates.*
@@ -35,6 +35,8 @@ Prefer one page? **Jump to the full tool** at any time.
 
 | What you want to know | What the planner shows |
 | --- | --- |
+| How much do I need to save each month? | The total monthly target, current average and remaining gap, upfront. |
+| How do I split my pay? | A month-by-month allocation for spending, bills/tax and actual net saving. |
 | Will I make my deadline? | Projected balance, shortfall and progress toward the goal. |
 | When will I actually get there? | A savings line that continues to the estimated goal date, up to ten years. |
 | What if I spend less or earn more? | Sliders update the result and monthly cash flow immediately. |

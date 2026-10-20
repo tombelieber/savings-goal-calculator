@@ -1,19 +1,19 @@
 <div align="center">
   <img src="dist/icon.svg" alt="存款目標計算器" width="76" />
   <h1>存款目標計算器</h1>
-  <p><strong>定個目標，睇清幾時儲到、仲差幾多。</strong></p>
+  <p><strong>每月要儲幾多？出糧後點分錢？一眼睇清。</strong></p>
   <p>數字留喺自己瀏覽器嘅儲蓄試算工具。</p>
   <p><a href="https://savings-goal-calculator-9eo.pages.dev/#start"><strong>即刻試下</strong></a> · <a href="https://savings-goal-calculator-9eo.pages.dev/offline.zip">下載離線版</a> · <a href="README.md">English</a></p>
   <p>唔使註冊 · 財務輸入唔會上傳 · MIT License</p>
 </div>
 
-**「到下年 4 月，我儲唔儲得夠？」** 填目標、收入同開支，就會見到到時有幾多、仲差幾多，同預計幾時達標。拖 slider，即刻試另一個計劃。
+**「我每月要儲幾多？」** 填目標、收入同開支，第一眼就見到每月儲蓄目標、目前儲到幾多同缺口。再睇出糧分配：日常使費留幾多、帳單及稅金留幾多、真正可以儲起幾多。
 
 介面用繁體廣東話，手機都方便填。內置香港帳單類別，支援六種顯示貨幣。
 
 <p align="center">
   <img src="docs/images/bills-mobile.jpg" alt="每月總額或逐項拆細，揀一種填固定帳單" width="270" />
-  <img src="docs/images/goal-mobile.jpg" alt="用虛構 2099 數據展示目標日期及儲蓄走勢" width="270" />
+  <img src="docs/images/goal-mobile.jpg" alt="用虛構 2099 數據展示每月儲蓄目標及出糧分配" width="270" />
 </p>
 
 *真實產品畫面；所有數字均為虛構，走勢示例用 2099 年日期。*
@@ -28,7 +28,7 @@
 
 ## 睇清改一個數，會差幾遠
 
-- 到目標月會有幾多，距離目標仲差幾多。
+- 每月要儲幾多、目前缺口，同出糧後嘅日常／帳單／淨儲蓄分配。
 - 儲蓄折線繼續畫到預計達標，最多估算十年。
 - 試下每月少使啲、多賺啲，結果同圖表即時更新。
 - Bonus 計指定到手月，水電煤按所揀付款月份扣整筆。

@@ -16,6 +16,30 @@ The deadline result is the last balance inside the selected period. The gap is
 the target minus that balance, bounded below at zero. Existing savings are added
 once, at the start; negative forecast balances are displayed honestly.
 
+## Monthly saving goal and payday plan
+
+The first result is the **total monthly net saving needed**, not just the extra
+income that would close a gap:
+
+```text
+monthly goal = max(0, target − existing savings − in-period one-off income) / months
+```
+
+It rounds up to the nearest cent. In-period one-off income includes an applied
+target-month trial; out-of-period receipts do not reduce this amount. The current
+monthly average excludes those one-off receipts and deducts spending, dated bills,
+reserves and tax. The separate monthly gap is the deadline shortfall divided by
+the number of months, rounded up. Trial income remains explicitly labelled.
+
+The payday month selector uses the original forecast rows. For that month, it
+shows income, everyday spending, bills plus tax reserves, and the remaining net
+saving. It does not spread utility payments across months. Annual insurance and
+rates remain monthly reserves under the existing model. Bonus counts only in its
+receipt month; the full entered tax reserve stays in the first month. If costs
+exceed income, the saving transfer is zero and the required drawdown is shown.
+This is a budget allocation based on the entered cash flow, not a bank transfer
+or a promise that a shortfall has been solved.
+
 ## Choose one bill method
 
 A monthly total is a flat estimate charged once every month. A detailed breakdown

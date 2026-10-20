@@ -3,6 +3,7 @@ import hashlib,json,base64,re,zipfile
 root=Path(__file__).resolve().parent
 page=(root/'calculator-page.html').read_text()
 scripts={'STYLE':'calculator-style.css','MODEL':'calculator-model.js','CHART':'calculator-chart.js','CONTROLS':'calculator-controls.js','BILLS':'calculator-bills.js','INCOME':'calculator-income.js','COSTS':'calculator-costs.js','COST_CONTROLS':'calculator-cost-controls.js','PAYMENT_CONTROLS':'calculator-payment-controls.js','VISUALS':'calculator-visuals.js','SHARE':'calculator-share.js','QUICK_MODEL':'calculator-quick-model.js','QUICK_DETAILS':'calculator-quick-details.js','QUICKSTART':'calculator-quickstart.js','APP':'calculator-app.js','OFFLINE':'calculator-offline.js'}
+scripts.update({'PAYDAY':'calculator-payday.js','PAYDAY_VIEW':'calculator-payday-view.js'})
 for token,path in scripts.items():page=page.replace('/*__'+token+'__*/',(root/path).read_text())
 config=json.loads((root/'public-config.json').read_text())
 page=page.replace('/*__CONFIG__*/','const PlannerConfig='+json.dumps(config,ensure_ascii=False)+';')

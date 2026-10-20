@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7b0w5Z4cSivN1eE6zLGeVAQz5GvCdr55hFEn9z5fcLw=' 'sha256-dq0TOrqvJ4chDRtpWy+Q6PUQcmQ2LoF3RXk4xRxU99o=' 'sha256-lxFo4ZCKtWc9Rmqy5Dsfy78pGJaBulQ7uMhXXJqlnoA=' 'sha256-lTgtKHe9OehB0OyZ9RLfsVZkJ30VG+tHDTlC6yddOvs=' 'sha256-mkXlAZvJ61erTlORXGoakCXS3sSKWyenzzEkUyK1OFI=' 'sha256-LAQasw6+/Dr3zkAtl8nOCT28Jx/BCaw4FOJIonAwTJ8=' 'sha256-mahrTa0eHSoxcCkKAIzOZAdfdNN0K57gr41WEAYMQ+E=' 'sha256-Oj1UiYWuNOLDaOuwOXgyD3COoJudbANL/frTjpjuoHM=' 'sha256-129o0s4eqW1TznaxJhIMnvS5ewo4GOp8DGop/lw4ofg=' 'sha256-pIFAJmlYwzge54hsBZFxEUXMv6Ihn4IAvakgcRfbXuU=' 'sha256-NZis79g6+WuMNskcaT/Jdh82IpKxqZ7JBVq3/Xmf7r0=' 'sha256-pMRyqBxGcZL+p4BF7d0urxeTvleFs6etVUe2ArnPTPo=' 'sha256-sG7IajwYp57KB7KiEOdZAoqTpBCnC4yZRudEkFzNWsY=' 'sha256-HccY8ce6BJvepTTY0Wp/qybExPiz6kwChhB1qbchAo0=' 'sha256-/iBWFf6LT0bmQQs5o82fwEpgCTTY1hHzZ0QumX5QrR4=' 'sha256-uyus0FjbL4a773MkfUSPHN3fXs683qHTr98WB7v7iRk='; style-src 'unsafe-inline'; connect-src 'none'; worker-src 'self'; img-src 'self' data:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
-<meta name="referrer" content="no-referrer"><meta name="description" content="存款目標計算器：睇清幾時儲到、仲差幾多。數字只存本機，毋須登入；用連結分享你的目標及設定。"><title>存款目標計算器｜我幾時儲到？</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7b0w5Z4cSivN1eE6zLGeVAQz5GvCdr55hFEn9z5fcLw=' 'sha256-dq0TOrqvJ4chDRtpWy+Q6PUQcmQ2LoF3RXk4xRxU99o=' 'sha256-WgVPGOnMJOLaTO6w7g2ViNfaziq7ZNaQbYvUw1u9E8M=' 'sha256-WNO3Wy7YQckOpqlletjvMa88sQXkaT9Q83pVUJEPZ+0=' 'sha256-lxFo4ZCKtWc9Rmqy5Dsfy78pGJaBulQ7uMhXXJqlnoA=' 'sha256-lTgtKHe9OehB0OyZ9RLfsVZkJ30VG+tHDTlC6yddOvs=' 'sha256-mkXlAZvJ61erTlORXGoakCXS3sSKWyenzzEkUyK1OFI=' 'sha256-LAQasw6+/Dr3zkAtl8nOCT28Jx/BCaw4FOJIonAwTJ8=' 'sha256-mahrTa0eHSoxcCkKAIzOZAdfdNN0K57gr41WEAYMQ+E=' 'sha256-Oj1UiYWuNOLDaOuwOXgyD3COoJudbANL/frTjpjuoHM=' 'sha256-129o0s4eqW1TznaxJhIMnvS5ewo4GOp8DGop/lw4ofg=' 'sha256-pIFAJmlYwzge54hsBZFxEUXMv6Ihn4IAvakgcRfbXuU=' 'sha256-NZis79g6+WuMNskcaT/Jdh82IpKxqZ7JBVq3/Xmf7r0=' 'sha256-pMRyqBxGcZL+p4BF7d0urxeTvleFs6etVUe2ArnPTPo=' 'sha256-sG7IajwYp57KB7KiEOdZAoqTpBCnC4yZRudEkFzNWsY=' 'sha256-B4ne6VRDd5jUPtdMy0vPc7lu6DTcKpdyjPAkjUl/QEY=' 'sha256-MyJBeEZ25VQHM69lfgxniOczz8rM6ndvmY9r4FzrMI0=' 'sha256-uyus0FjbL4a773MkfUSPHN3fXs683qHTr98WB7v7iRk='; style-src 'unsafe-inline'; connect-src 'none'; worker-src 'self'; img-src 'self' data:; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer"><meta name="description" content="每月要儲幾多？填幾個數，即刻睇到儲蓄目標同出糧分配計劃。數字只存本機，毋須登入；可離線使用。"><title>存款目標計算器｜每月要儲幾多？</title>
 <style>:root{
  color-scheme:light dark;
  --paper:light-dark(#f7f4ee,#24231f);--surface:light-dark(#fffefa,#2c2b26);
@@ -11,6 +11,43 @@
  --error:light-dark(#a32f30,#ffb5af);--olive:light-dark(#64745b,#acbca1);
  --gold:light-dark(#9a7437,#dfc186);--focus:light-dark(#a95136,#efb39d);
 }
+#goal .badge{display:block;margin-bottom:10px}
+#goal h1{font-size:26px;line-height:1.3;outline:none}
+#goal .goal-line{margin-top:6px;font-size:12px}
+.monthly-amount{font-size:clamp(28px,8.8vw,42px);font-weight:600;line-height:1.3;letter-spacing:-.035em;font-variant-numeric:tabular-nums;margin:12px 0 14px;overflow-wrap:anywhere}
+.monthly-basis:empty,.payday .help:empty{display:none}
+.monthly-basis:not(:empty){margin:-5px 0 12px}
+.monthly-current-row,.monthly-gap-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:12px;line-height:1.6}
+.monthly-current-row{padding:10px 0;border-top:1px solid var(--line);color:var(--muted)}
+.monthly-current-row strong,.monthly-gap-row strong{font-size:15px;font-weight:600;max-width:56%;overflow-wrap:anywhere;text-align:right;font-variant-numeric:tabular-nums}
+.monthly-gap-row{color:var(--blue)}
+.monthly-gap-row[data-status=ready]{color:var(--olive)}
+.payday-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.payday-heading h2{font-size:19px;line-height:1.4}
+.payday-picker{flex-shrink:0}
+.payday-picker label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.payday-picker select{width:auto;max-width:146px;min-height:44px;padding:8px 6px;font-size:12px;border:1px solid var(--line);border-radius:9px;background:var(--field);cursor:pointer}
+.payday-income{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted);margin:10px 0 4px}
+.payday-income strong{font-weight:500;font-variant-numeric:tabular-nums}
+.payday-steps{counter-reset:payday;list-style:none;padding:0;margin:0}
+.payday-steps li{counter-increment:payday;display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}
+.payday-steps li::before{content:counter(payday);font-size:12px;color:var(--muted);min-width:14px}
+.payday-steps li>div{flex:1;min-width:0}
+.payday-steps small{display:block;font-size:10px;line-height:1.5;color:var(--muted);margin-top:2px}
+.payday-steps strong{font-size:16px;font-weight:600;line-height:1.3;text-align:right;overflow-wrap:anywhere;max-width:49%;font-variant-numeric:tabular-nums}
+.payday-steps .payday-saving{border-bottom:0;color:var(--olive)}
+.payday-warning{color:var(--error);font-size:12px;line-height:1.6;margin-top:8px}
+.payday .overview-links{margin-top:8px}
+.payday .overview-links a{padding:10px 12px;font-size:12px}
+.forecast-summary h2{font-size:18px}
+.forecast-ending{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:14px 0 10px}
+.forecast-ending strong{font-size:25px;font-weight:600;line-height:1.3;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-align:right}
+.forecast-summary .gap-row{padding:8px 0}
+.forecast-summary .gap-row strong{font-size:17px}
+.forecast-summary .eta-box{border-bottom:0;padding:10px 0 0;margin-top:2px}
+.forecast-summary .eta-box strong{font-size:17px}
+#scenarios .quiet-actions{margin-top:14px}
+@media(max-width:360px){#goal h1{font-size:23px}.monthly-current-row,.monthly-gap-row{gap:8px;font-size:11px}.monthly-current-row strong,.monthly-gap-row strong{font-size:13px}.payday-heading{gap:6px}.payday-heading h2{font-size:17px}.payday-picker select{font-size:11px;max-width:132px}.payday-steps li{gap:6px;font-size:12px}.payday-steps strong{font-size:14px}.payday .overview-links a{padding:10px 8px;font-size:11px}}
 body[data-view=onboarding]>header,body[data-view=onboarding]>main,body[data-view=onboarding]>.live-dock{display:none}
 body[data-view=results] #inputs,body[data-view=results] .ledger{display:none}
 body[data-view=results] .layout{display:block;max-width:760px;margin:auto}
@@ -104,6 +141,8 @@ input::placeholder{font-size:12px;color:var(--muted);font-weight:400}.money-cont
 body[data-quick-compact=true] .quick-shell{justify-content:flex-start;padding-top:28px}body[data-quick-compact=true] #quick-progress{margin-bottom:22px}body[data-quick-compact=true] .quick-help{margin:10px 0 16px;min-height:0}body[data-quick-compact=true] #quick-title{font-size:27px}
 
 .quick-bill-modes{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:18px}.quick-bill-modes button{min-height:44px;padding:8px;font-size:14px;border-radius:8px;color:var(--muted)}.quick-bill-modes button[aria-pressed=true]{background:var(--soft);color:var(--blue);font-weight:600}.quick-bill-modes button:hover{color:var(--blue)}
+
+@media(max-width:360px){.topbar{gap:6px}.topbar>span{font-size:9px}nav{gap:4px;flex-shrink:0}nav a,nav #start-quick{font-size:11px;white-space:nowrap;padding:8px}}
 </style></head><body data-view="onboarding">
 <section id="quickstart" class="quickstart" aria-labelledby="quick-title">
  <div class="quick-top"><span>存款目標計算器</span><button type="button" id="quick-skip">跳到完整工具</button></div>
@@ -124,25 +163,38 @@ body[data-quick-compact=true] .quick-shell{justify-content:flex-start;padding-to
 <header><div class="topbar"><span>存款目標計算器</span><nav aria-label="內容"><button type="button" id="start-quick">逐題填</button><a href="#goal">結果</a><a href="#inputs">編輯</a><a href="#visual-summary">圖解</a></nav></div></header>
 <main><div id="shared-plan-banner" class="share-banner" hidden><p>呢份係朋友分享嘅計劃，未取代我原有設定。</p><div><button type="button" id="keep-shared-plan">用呢份做我嘅計劃</button><button type="button" id="restore-local-plan">返回我的計劃</button></div></div><p id="share-import-note" class="help" role="status"></p><div class="layout"><div class="overview">
 <section class="slide" id="goal" aria-labelledby="goal-title">
- <div class="intro"><span class="badge" id="example-status">虛構示例，可替換</span><div class="quiet-actions"><button type="button" id="load-example">載入示例</button><button type="button" id="clear-inputs">清空重填</button></div></div>
- <span class="read-label">自動計算結果</span><h1 id="goal-title" tabindex="-1">我幾時儲到？</h1>
- <div class="utility-actions"><button type="button" id="share-plan">分享計劃</button><a href="./offline.zip" download="savings-goal-calculator.zip" id="download-offline">下載離線版</a></div><section id="share-panel" class="share-panel" aria-label="分享此計劃" hidden><div class="share-panel-head"><strong>分享一份可調整嘅計劃</strong><button type="button" id="close-share" aria-label="關閉分享">關閉</button></div><p class="help">連結包含金額及自訂名稱；任何收到連結嘅人都睇到。只喺你複製／傳送時分享。</p><label for="share-link" class="name-label">分享連結</label><input id="share-link" type="text" readonly spellcheck="false"><button type="button" id="copy-share" class="action-primary">複製連結</button><p class="help" id="share-copy-status" role="status"></p></section><div class="hero"><p class="label" id="result-label">到時我會有</p><p class="hero-value" id="ending">—</p><p class="goal-line" id="goal-line"></p><p class="help" id="simple-plan-note"></p></div>
- <div class="track" id="progress" role="progressbar" aria-label="儲蓄目標完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
- <div class="gap-row"><span id="gap-label">仲差</span><strong id="shortfall">—</strong></div>
- <div class="overview-links"><a class="action-primary" href="#inputs">打開完整工具</a><a class="action-secondary" href="#visual-summary">查看儲蓄圖解</a></div>
- <div class="result-edit-actions" role="group" aria-label="補充我的計劃"><button type="button" id="result-add-income" data-add-from-result="income">＋ 每月額外收入</button><button type="button" id="result-add-bonus" data-add-from-result="bonus">＋ Bonus／一次性收入</button><a href="#housing-section">拆細固定帳單</a></div>
- <div class="eta-box"><span class="label">我幾時儲夠？</span><strong id="eta">—</strong></div><p class="help" id="eta-note"></p>
- <p class="plan-summary" id="plan-summary"></p>
- <div id="paths"><div class="path-grid"><button class="path" type="button" id="try-monthly"><small>我每月再多儲</small><strong id="monthly-needed">—</strong><span>＋ 試下我每月多賺呢筆</span></button><button class="path" type="button" id="try-once"><small>或者我到時再多一筆</small><strong id="once-needed">—</strong><span>＋ 試下我到時多一筆</span></button></div></div>
- <p class="limit" id="spending-limit"></p><p class="baseline" id="baseline-note"></p><p class="help" id="assumption-note"></p><p class="error" id="status" role="status"></p>
-
+ <span class="badge" id="example-status">虛構示例，可替換</span>
+ <h1 id="goal-title" tabindex="-1">我每月要儲幾多？</h1><p class="goal-line" id="goal-line"></p>
+ <p class="monthly-amount" id="monthly-required">—</p><p class="help monthly-basis" id="monthly-basis"></p>
+ <div class="monthly-current-row"><span id="monthly-current-label">按目前收支，每月平均儲到</span><strong id="monthly-current">—</strong></div>
+ <div class="monthly-gap-row" id="monthly-gap-row"><span id="monthly-gap-label"></span><strong id="monthly-gap"></strong></div>
+ <p class="error" id="status" role="status"></p>
+</section>
+<section class="slide payday" id="payday" aria-labelledby="payday-title">
+ <div class="payday-heading"><h2 id="payday-title">我出糧後點分錢？</h2><div class="payday-picker"><label for="payday-month">月份</label><select id="payday-month" aria-label="出糧分配月份"></select></div></div>
+ <div class="payday-income"><span>本月收入</span><strong id="payday-income">—</strong></div>
+ <ol class="payday-steps"><li><div><span>留起日常使費</span><small>食飯、交通同日常消費</small></div><strong id="payday-spending">—</strong></li><li><div><span>留起帳單／稅金</span><small>交租、帳單及預留款，另行留起</small></div><strong id="payday-reserves">—</strong></li><li class="payday-saving"><div><span id="payday-save-label">轉入目標儲蓄</span><small>扣晒上面兩筆，先係真正儲到</small></div><strong id="payday-saving">—</strong></li></ol>
+ <p class="payday-warning" id="payday-drawdown" role="status" hidden></p><p class="help" id="payday-note"></p>
+ <div class="overview-links"><a class="action-primary" href="#inputs">調整收入或支出</a><a class="action-secondary" href="#months">睇儲蓄走勢</a></div>
+</section>
+<section class="slide forecast-summary" id="forecast-summary" aria-labelledby="forecast-title">
+ <h2 id="forecast-title">照而家計劃，到時有幾多？</h2>
+ <div class="forecast-ending"><span class="label" id="result-label">到時我會有</span><strong id="ending">—</strong></div>
+ <div class="track" id="progress" role="progressbar" aria-label="儲蓄目標完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div><div class="gap-row"><span id="gap-label">仲差</span><strong id="shortfall">—</strong></div>
+ <div class="eta-box"><span class="label">按目前收支，預計儲夠</span><strong id="eta">—</strong></div>
+ <p class="help" id="simple-plan-note"></p><p class="help" id="assumption-note"></p>
+ <div class="utility-actions"><button type="button" id="share-plan">分享計劃</button><a href="./offline.zip" download="savings-goal-calculator.zip" id="download-offline">下載離線版</a></div><section id="share-panel" class="share-panel" aria-label="分享此計劃" hidden><div class="share-panel-head"><strong>分享一份可調整嘅計劃</strong><button type="button" id="close-share" aria-label="關閉分享">關閉</button></div><p class="help">連結包含金額及自訂名稱；任何收到連結嘅人都睇到。只喺你複製／傳送時分享。</p><label for="share-link" class="name-label">分享連結</label><input id="share-link" type="text" readonly spellcheck="false"><button type="button" id="copy-share" class="action-primary">複製連結</button><p class="help" id="share-copy-status" role="status"></p></section>
 </section>
 <section class="slide" id="months" aria-labelledby="months-title">
  <h2 id="months-title">我嘅儲蓄走勢</h2><div class="chart-toolbar"><div class="segmented" role="group" aria-label="折線圖視角"><button type="button" data-chart-mode="balance" aria-pressed="true">淨儲蓄</button><button type="button" data-chart-mode="flow" aria-pressed="false">每月收支</button></div><span class="chart-period" id="chart-period"></span></div>
  <p class="help chart-horizon-note" id="chart-horizon-note"></p><div class="chart-legend" id="chart-legend" aria-label="圖例"></div><div class="chart" id="chart"></div>
  <div class="month-picker"><span class="name-label">拖動選月份</span><label for="chart-month" id="selected-month">選擇月份</label><input class="range" id="chart-month" type="range" min="0" max="6" step="1" value="6" aria-label="選擇圖表月份"></div><p class="chart-help">點圖或拖 slider 睇明細。</p>
  <div class="month-detail" id="month-detail" aria-live="polite"></div><p class="help" id="timing-note"></p><p class="help" id="income-note"></p>
-</section><section class="slide" id="visual-summary" aria-labelledby="visual-title"><h2 id="visual-title">我啲錢去咗邊？</h2><p class="help" id="visual-period"></p><div id="plan-visuals"></div><a class="next" href="#inputs">返回編輯計劃</a></section></div>
+</section><section class="slide" id="visual-summary" aria-labelledby="visual-title"><h2 id="visual-title">我啲錢去咗邊？</h2><p class="help" id="visual-period"></p><div id="plan-visuals"></div><a class="next" href="#inputs">返回編輯計劃</a></section>
+<section class="slide" id="scenarios" aria-labelledby="scenarios-title"><h2 id="scenarios-title">試下其他方案</h2><p class="plan-summary" id="plan-summary"></p>
+ <div id="paths"><div class="path-grid"><button class="path" type="button" id="try-monthly"><small>如果我每月多賺</small><strong id="monthly-needed">—</strong><span>＋ 試算呢份額外收入</span></button><button class="path" type="button" id="try-once"><small>如果到時多一筆</small><strong id="once-needed">—</strong><span>＋ 試算呢筆額外收入</span></button></div></div><p class="limit" id="spending-limit"></p><p class="baseline" id="baseline-note"></p><p class="help" id="eta-note"></p>
+ <div class="result-edit-actions" role="group" aria-label="補充我的計劃"><button type="button" id="result-add-income" data-add-from-result="income">＋ 每月額外收入</button><button type="button" id="result-add-bonus" data-add-from-result="bonus">＋ Bonus／一次性收入</button><a href="#housing-section">拆細固定帳單</a></div><div class="quiet-actions"><button type="button" id="load-example">載入示例</button><button type="button" id="clear-inputs">清空重填</button></div>
+</section></div>
 <section class="slide" id="inputs" aria-labelledby="inputs-title">
  <h2 id="inputs-title" tabindex="-1">填我嘅儲蓄計劃</h2><div class="edit-guide"><p><strong>✎ 改金額或拖滑桿，即刻睇結果。</strong></p></div>
  <div class="currency-line"><label for="currency">貨幣</label><select id="currency" data-field="currency"><option>HKD</option><option>USD</option><option>CNY</option><option>TWD</option><option>EUR</option><option>GBP</option></select></div>
@@ -159,7 +211,7 @@ body[data-quick-compact=true] .quick-shell{justify-content:flex-start;padding-to
 <section class="ledger" aria-labelledby="ledger-title"><h3 id="ledger-title">我每個月儲到幾多</h3><p class="table-note" id="table-note"></p><div class="table-wrap"><table aria-label="逐月入儲蓄、帳單及稅金扣除後結餘"><thead><tr><th>月份</th><th>入儲蓄</th><th>帳單及預留</th><th>稅金預留</th><th>淨結餘</th></tr></thead><tbody id="month-rows"></tbody><tfoot><tr><td>合計</td><td id="total-in">—</td><td id="total-bills">—</td><td id="total-tax">—</td><td id="final-balance">—</td></tr></tfoot></table></div></section>
 <p class="footer">只作試算。數字只存呢個瀏覽器，無帳號、無追蹤、無金融資料上傳。分享連結內含設定，任何持有連結嘅人都可查看。<br><span id="offline-status">準備離線使用中…</span><br><span id="save-status"></span></p>
 </main>
-<div class="live-dock" aria-label="即時儲蓄結果"><div class="dock-inner"><a class="dock-money" href="#goal"><small id="dock-gap">到時我會有</small><strong id="dock-ending">—</strong><span class="dock-action">查看計算結果 ›</span></a><a class="dock-eta" href="#months">查看走勢<span id="dock-eta">—</span></a></div></div>
+<div class="live-dock" aria-label="即時儲蓄計劃"><div class="dock-inner"><a class="dock-money" href="#payday"><small id="dock-gap">每月儲蓄目標</small><strong id="dock-monthly">—</strong><span class="dock-action">查看出糧分配 ›</span></a><a class="dock-eta" href="#months">查看走勢<span id="dock-eta">—</span></a></div></div>
 <script>const PlannerConfig={"publicUrl": "https://savings-goal-calculator-9eo.pages.dev/"};</script><script>(function(root){
  'use strict';
  const fields=['startCash','goal','monthlyIncome','otherMonthly','spendingMonthly','billsMonthly','taxTotal'];
@@ -305,6 +357,75 @@ body[data-quick-compact=true] .quick-shell{justify-content:flex-start;padding-to
  }
  root.SavingsCalculator={fields,currencies,cents,billFields,billTotal,isAmount,amountOK,incomeTotal,monthlyReserve,insuranceTotal,utilityKeys,paymentPeriods,paymentDue,billsForMonth,validatePlan,monthRange,shiftMonth,defaultMonths,example,blank,validate,forecast,targetReport,estimateGoal,projectToGoal};
  if(typeof module!=='undefined')module.exports=root.SavingsCalculator;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ const G=root.SavingsCalculator;
+ function build(state,plan={},result=G.forecast(state,plan)){
+  const months=result.rows.length;
+  const oneOffTotal=result.totalOneOffIncome+G.cents(plan.onceNet??0);
+  const remaining=Math.max(0,G.cents(state.goal)-result.startCash-oneOffTotal);
+  return {
+   requiredMonthly:Math.ceil(remaining/months),
+   averageMonthly:Math.floor((result.growth-oneOffTotal)/months),
+   extraMonthly:Math.ceil(Math.max(0,G.cents(state.goal)-result.ending)/months),
+   oneOffTotal,
+   rows:result.rows.map(row=>({
+    month:row.month,income:row.income,spending:row.spending,bills:row.bills,tax:row.tax,
+    reserves:row.bills+row.tax,saving:Math.max(0,row.netChange),drawdown:Math.max(0,-row.netChange),
+    extraIncome:row.oneOffIncome+(row.month===state.endMonth?G.cents(plan.onceNet??0):0)
+   }))
+  };
+ }
+ root.PaydayPlan={build};
+ if(typeof module!=='undefined')module.exports=root.PaydayPlan;
+})(typeof window==='undefined'?globalThis:window);
+</script><script>(function(root){
+ 'use strict';
+ function create({get,money,monthText}){
+  let data=null,selectedMonth='';
+  const picker=get('payday-month');
+  function showMonth(){
+   if(!data)return;
+   const row=data.rows.find(row=>row.month===selectedMonth)||data.rows[0];
+   selectedMonth=row.month;picker.value=row.month;
+   for(const key of ['income','spending','reserves','saving'])get('payday-'+key).textContent=money(row[key]);
+   get('payday-save-label').textContent=row.drawdown?'今月暫時儲唔到':'轉入目標儲蓄';
+   get('payday-drawdown').hidden=!row.drawdown;
+   get('payday-drawdown').textContent=row.drawdown?`本月支出比收入多 ${money(row.drawdown)}，要動用現有儲蓄。`:'';
+   const notes=[];
+   if(row.extraIncome)notes.push(`當月額外收入 ${money(row.extraIncome)} 已計入，餘額全數儲起。`);
+   if(row.tax)notes.push(`帳單及預留含稅金 ${money(row.tax)}，只喺呢個月扣起。`);
+   get('payday-note').textContent=notes.join(' ');
+  }
+  picker.addEventListener('change',()=>{selectedMonth=picker.value;showMonth();});
+  function render(state,plan,result){
+   data=PaydayPlan.build(state,plan,result);picker.disabled=false;
+   get('monthly-required').textContent=money(data.requiredMonthly);
+   get('monthly-current-label').textContent=data.averageMonthly<0?'按目前收支，每月平均倒貼':'按目前收支，每月平均儲到';
+   get('monthly-current').textContent=money(Math.abs(data.averageMonthly));
+   get('monthly-gap-label').textContent=data.extraMonthly?'要準時達標，每月仲要騰出':'按目前收支，目標月可達標';
+   get('monthly-gap').textContent=data.extraMonthly?money(data.extraMonthly):'';
+   get('monthly-gap-row').dataset.status=data.extraMonthly?'short':'ready';
+   const basis=[];
+   if(result.startCash)basis.push(`現有儲蓄 ${money(result.startCash)}`);
+   if(data.oneOffTotal)basis.push(`期間額外收入 ${money(data.oneOffTotal)}`);
+   get('monthly-basis').textContent=basis.length?'已計入'+basis.join('、')+'。':'';
+   const months=data.rows.map(row=>row.month);
+   if([...picker.options].map(option=>option.value).join()!==months.join()){
+    picker.replaceChildren(...months.map(month=>{const option=document.createElement('option');option.value=month;option.textContent=monthText(month);return option;}));
+   }
+   showMonth();return data;
+  }
+  function clear(){
+   data=null;picker.disabled=true;
+   for(const id of ['monthly-required','monthly-current','payday-income','payday-spending','payday-reserves','payday-saving'])get(id).textContent='—';
+   for(const id of ['monthly-basis','monthly-gap','monthly-gap-label','payday-note','payday-drawdown'])get(id).textContent='';
+   get('payday-drawdown').hidden=true;get('payday-save-label').textContent='轉入目標儲蓄';
+  }
+  return {render,clear};
+ }
+ root.PaydayView={create};
 })(typeof window==='undefined'?globalThis:window);
 </script><script>(function(root){
  'use strict';
@@ -904,8 +1025,8 @@ body[data-quick-compact=true] .quick-shell{justify-content:flex-start;padding-to
    const current=steps[step];document.body.dataset.quickCompact=String(Boolean(current.optional)||current.key==='bills');$('quick-count').textContent=current.optional?'選填 1 / 1':`${step+1} / 6`;
    $('quick-progress').setAttribute('aria-valuemax',String(steps.length));$('quick-progress').setAttribute('aria-valuenow',String(step+1));$('quick-progress-fill').style.width=((step+1)/steps.length*100)+'%';
    $('quick-title').textContent=current.title;$('quick-help').textContent=current.help;
-   $('quick-back').hidden=step===0;$('quick-next').textContent=step===steps.length-1?'睇我嘅結果':current.optional?'繼續':'下一題';
-   $('quick-optional-skip').hidden=!current.optional;$('quick-optional-skip').textContent=extra.incomeUsed?'保留原本收入，睇結果':'略過，直接睇結果';
+   $('quick-back').hidden=step===0;$('quick-next').textContent=step===steps.length-1?'睇我嘅儲錢計劃':current.optional?'繼續':'下一題';
+   $('quick-optional-skip').hidden=!current.optional;$('quick-optional-skip').textContent=extra.incomeUsed?'保留原本收入，睇計劃':'略過，直接睇計劃';
    $('quick-zero').hidden=!current.zero;$('quick-zero').textContent=current.zero||'';
    $('quick-detail-note').textContent=step===5&&billMode==='total'?'按月總額估算，唔包括上一題日常使費。':'';
    if(snapshot&&step===3&&snapshot.state.incomeItems?.length>1)$('quick-detail-note').textContent='已帶入全部每月收入。改總額會取代原有收入拆項；想逐項改可以跳到完整工具。';
@@ -1040,6 +1161,7 @@ const visuals=SavingsVisuals.create($('plan-visuals'));
 const amount=(minor,d=2)=>new Intl.NumberFormat('en-HK',{minimumFractionDigits:d,maximumFractionDigits:d}).format(minor/100);
 const money=(minor,d=2)=>state.currency+' '+amount(minor,d);
 const monthText=month=>Number(month.slice(0,4))+'年'+Number(month.slice(5))+'月';
+const payday=PaydayView.create({get:$,money,monthText});
 const activePlan=()=>plan.monthlyNet>0||plan.onceNet>0;
 function sync(input,value){if(document.activeElement!==input)input.value=String(value);}
 for(const config of controls)MoneyControls.mount($('control-'+config.key),config);
@@ -1139,8 +1261,8 @@ function persist(){
  try{localStorage.setItem(storageKey,JSON.stringify({state,plan,mode,ranges}));$('save-status').textContent='更改已存喺呢個瀏覽器。';}catch{$('save-status').textContent='目前未能儲存；關閉前請留意。';}
 }
 function clearResult(){
- base=result=report=eta=trajectory=null;visuals.clear();$('billsMonthly').textContent='—';$('visual-period').textContent='填齊數字後顯示分配同進度。';
- for(const id of ['ending','shortfall','eta','total-in','total-bills','total-tax','final-balance','dock-ending','dock-eta'])$(id).textContent='—';
+ base=result=report=eta=trajectory=null;visuals.clear();payday.clear();$('billsMonthly').textContent='—';$('visual-period').textContent='填齊數字後顯示分配同進度。';
+ for(const id of ['ending','shortfall','eta','total-in','total-bills','total-tax','final-balance','dock-monthly','dock-eta'])$(id).textContent='—';
  for(const id of ['chart-horizon-note','goal-line','baseline-note','assumption-note','month-detail','timing-note','income-note','eta-note','plan-summary','spending-limit'])$(id).textContent='';
  $('month-rows').replaceChildren();$('paths').hidden=true;$('try-once').disabled=$('try-monthly').disabled=true;
  $('chart').innerHTML='<p class="chart-empty">填齊數字後，呢度會顯示儲蓄走勢。</p>';
@@ -1150,12 +1272,13 @@ function clearResult(){
 }
 function render(){
  $('shared-plan-banner').hidden=!sharedDraft;
- syncControls();$('example-status').textContent=sharedDraft?'分享計劃 · 試玩中':mode==='example'?'虛構示例，可替換':'你的本機計劃';
+ syncControls();$('example-status').textContent=(sharedDraft?'分享計劃 · 試玩中':mode==='example'?'虛構示例，可替換':'你的本機計劃')+(activePlan()?' · 含未確認收入試算':'');
  $('simple-plan-note').textContent=state.billSource==='legacy'?'快速估算：帳單按月總額計。Bonus 同稅金只計已填項目。':'';
- $('result-label').textContent=activePlan()?'加埋試算，到時我會有 · '+state.currency:'到時我會有 · '+state.currency;
+ $('result-label').textContent=(activePlan()?'含試算 · ':'')+state.currency;
  $('reset-plan').hidden=!activePlan();const errors=[...G.validate(state),...G.validatePlan(plan)];$('status').textContent=errors.join(' ');
  if(errors.length){clearResult();persist();return;}
  base=G.forecast(state);result=G.forecast(state,plan);report=G.targetReport(state,result);trajectory=G.projectToGoal(state,plan);eta=trajectory.eta;
+ const paydayPlan=payday.render(state,plan,result);
  $('ending').textContent=amount(result.ending);$('goal-line').textContent=`到 ${monthText(state.endMonth)}，我要儲 ${money(G.cents(state.goal),0)}`;
  $('gap-label').textContent=report.shortfall?'仲差':report.surplus?'超出目標':'剛好達標';$('shortfall').textContent=money(report.shortfall||report.surplus);
  const percent=G.cents(state.goal)>0?Math.max(0,Math.min(100,result.ending/G.cents(state.goal)*100)):(result.ending>=0?100:0);
@@ -1177,7 +1300,7 @@ function render(){
  $('table-note').textContent=`${state.currency}，四捨五入至元；點月份睇分角。入儲蓄已先扣個人消費。`;
  $('timing-note').textContent=`水電煤按所選付款月扣整筆；差餉／保險仍按月預留。${monthText(state.startMonth)}先預留全期稅金。`;
  $('income-note').textContent=`原定期間 ${result.rows.length} 個月；圖表共 ${trajectory.rows.length} 個月。${result.excludedOneOffs?'有 '+result.excludedOneOffs+' 筆一次性收入喺原定期限之外，未計入目標月結餘；延伸預測只喺實際入帳月計入。':''}${plan.onceNet?'新增一次性淨收入放喺目標月。':''}`;
- $('dock-ending').textContent=money(result.ending);$('dock-gap').textContent=report.shortfall?'距離目標仲差 '+money(report.shortfall):'目標月份已足夠';$('dock-eta').textContent=eta.reached?monthText(eta.month):'預測期內未達標';
+ $('dock-monthly').textContent=money(paydayPlan.requiredMonthly);$('dock-gap').textContent='每月儲蓄目標'+(activePlan()?' · 含試算':'');$('dock-eta').textContent=eta.reached?monthText(eta.month):'預測期內未達標';
  renderChart();showMonth();visuals.render(state,result);$('visual-period').textContent=state.startMonth.replace('-','/')+' — '+state.endMonth.replace('-','/')+' · '+state.currency+' · 依輸入條件試算';persist();
 }
 function updateInput(input){

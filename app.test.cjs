@@ -9,13 +9,27 @@ function open({saved,url='https://example.test/',storageFailure=false,guided=fal
 }
 function enter(dom,id,value){const el=dom.window.document.getElementById(id);el.focus();el.value=String(value);el.dispatchEvent(new dom.window.Event('input',{bubbles:true}));el.blur();}
 const saved=dom=>JSON.parse(dom.window.localStorage.getItem(key));
+test('monthly total and additional gap lead the result, and invalid input clears the payday advice',()=>{
+ const p=open();assert.equal(p.d.getElementById('monthly-required').textContent,'HKD 25,000.00');assert.equal(p.d.getElementById('monthly-gap').textContent,'HKD 8,800.00');
+ assert.deepEqual([...p.d.querySelector('.overview').children].slice(0,3).map(node=>node.id),['goal','payday','forecast-summary']);
+ enter(p.dom,'target',120000);assert.equal(p.d.getElementById('monthly-required').textContent,'HKD 10,000.00');assert.equal(p.d.getElementById('monthly-gap').textContent,'');
+ enter(p.dom,'taxTotal','');assert.equal(p.d.getElementById('monthly-required').textContent,'—');assert.equal(p.d.getElementById('payday-saving').textContent,'—');assert.equal(p.d.getElementById('payday-month').disabled,true);p.dom.window.close();
+});
+test('payday month switching shows whole utility payments, one-time tax and bonus; edits preserve the selected month',()=>{
+ const s=fixture();s.taxTotal=1200;s.oneOffs=[{amount:12000,month:'2099-06'}];const p=open({saved:{state:s,plan:{monthlyNet:0,onceNet:0},mode:'custom'}});
+ assert.equal(p.d.getElementById('monthly-required').textContent,'HKD 24,000.00');assert.equal(p.d.getElementById('payday-reserves').textContent,'HKD 10,600.00');assert.equal(p.d.getElementById('payday-saving').textContent,'HKD 14,400.00');
+ const picker=p.d.getElementById('payday-month');picker.value='2099-06';picker.dispatchEvent(new p.dom.window.Event('change',{bubbles:true}));
+ assert.equal(p.d.getElementById('payday-reserves').textContent,'HKD 8,300.00');assert.equal(p.d.getElementById('payday-income').textContent,'HKD 42,000.00');assert.equal(p.d.getElementById('payday-saving').textContent,'HKD 28,700.00');
+ enter(p.dom,'spendingMonthly',6000);assert.equal(picker.value,'2099-06');assert.equal(p.d.getElementById('payday-saving').textContent,'HKD 27,700.00');
+ enter(p.dom,'monthlyIncome',0);assert.equal(p.d.getElementById('payday-saving').textContent,'HKD 0.00');assert.equal(p.d.getElementById('payday-drawdown').hidden,false);assert.match(p.d.getElementById('payday-drawdown').textContent,/2,300.00/);p.dom.window.close();
+});
 test('the complete calculator keeps generic defaults and twelve months; all fields stay flat and editable',()=>{
  const {dom,d}=open();assert.equal(d.getElementById('target').value,'300,000');assert.equal(d.getElementById('startCash').value,'0');assert.equal(d.getElementById('horizon-value').textContent,'12個月');assert.equal(d.querySelectorAll('details,summary').length,0);assert.equal(d.querySelectorAll('#oneoffs .oneoff').length,0);assert.equal(d.querySelectorAll('.insurance-row').length,0);
  assert.equal(d.getElementById('ending').textContent,'194,400.00');assert.equal(d.querySelectorAll('.goal-dot').length,0);assert.equal(d.querySelectorAll('script[src],iframe,img[src^="http"]').length,0);dom.window.close();
 });
 test('edited local numbers persist across reload and drive the bar, line charts and fixed dock',()=>{
  const p=open();enter(p.dom,'monthlyIncome','35,000.25');enter(p.dom,'spendingMonthly','6,000');const cache=saved(p.dom),q=open({saved:cache});
- assert.equal(q.d.getElementById('monthlyIncome').value,'35,000.25');assert.equal(q.d.getElementById('spendingMonthly').value,'6,000');assert.equal(q.d.getElementById('ending').textContent,'242,403.00');assert.equal(q.d.getElementById('goal-projected').textContent,'HKD 242,403.00');assert.equal(q.d.getElementById('dock-ending').textContent,'HKD 242,403.00');
+ assert.equal(q.d.getElementById('monthlyIncome').value,'35,000.25');assert.equal(q.d.getElementById('spendingMonthly').value,'6,000');assert.equal(q.d.getElementById('ending').textContent,'242,403.00');assert.equal(q.d.getElementById('goal-projected').textContent,'HKD 242,403.00');assert.equal(q.d.getElementById('dock-monthly').textContent,'HKD 25,000.00');
  q.d.querySelector('[data-chart-mode="flow"]').click();assert.ok(q.d.querySelector('[data-series="bills"]'));p.dom.window.close();q.dom.window.close();
 });
 test('a shared plan fills the form without overwriting a friend existing local settings; keep and return are explicit',()=>{

@@ -40,6 +40,7 @@ const visuals=SavingsVisuals.create($('plan-visuals'));
 const amount=(minor,d=2)=>new Intl.NumberFormat('en-HK',{minimumFractionDigits:d,maximumFractionDigits:d}).format(minor/100);
 const money=(minor,d=2)=>state.currency+' '+amount(minor,d);
 const monthText=month=>Number(month.slice(0,4))+'年'+Number(month.slice(5))+'月';
+const payday=PaydayView.create({get:$,money,monthText});
 const activePlan=()=>plan.monthlyNet>0||plan.onceNet>0;
 function sync(input,value){if(document.activeElement!==input)input.value=String(value);}
 for(const config of controls)MoneyControls.mount($('control-'+config.key),config);
@@ -139,8 +140,8 @@ function persist(){
  try{localStorage.setItem(storageKey,JSON.stringify({state,plan,mode,ranges}));$('save-status').textContent='更改已存喺呢個瀏覽器。';}catch{$('save-status').textContent='目前未能儲存；關閉前請留意。';}
 }
 function clearResult(){
- base=result=report=eta=trajectory=null;visuals.clear();$('billsMonthly').textContent='—';$('visual-period').textContent='填齊數字後顯示分配同進度。';
- for(const id of ['ending','shortfall','eta','total-in','total-bills','total-tax','final-balance','dock-ending','dock-eta'])$(id).textContent='—';
+ base=result=report=eta=trajectory=null;visuals.clear();payday.clear();$('billsMonthly').textContent='—';$('visual-period').textContent='填齊數字後顯示分配同進度。';
+ for(const id of ['ending','shortfall','eta','total-in','total-bills','total-tax','final-balance','dock-monthly','dock-eta'])$(id).textContent='—';
  for(const id of ['chart-horizon-note','goal-line','baseline-note','assumption-note','month-detail','timing-note','income-note','eta-note','plan-summary','spending-limit'])$(id).textContent='';
  $('month-rows').replaceChildren();$('paths').hidden=true;$('try-once').disabled=$('try-monthly').disabled=true;
  $('chart').innerHTML='<p class="chart-empty">填齊數字後，呢度會顯示儲蓄走勢。</p>';
@@ -150,12 +151,13 @@ function clearResult(){
 }
 function render(){
  $('shared-plan-banner').hidden=!sharedDraft;
- syncControls();$('example-status').textContent=sharedDraft?'分享計劃 · 試玩中':mode==='example'?'虛構示例，可替換':'你的本機計劃';
+ syncControls();$('example-status').textContent=(sharedDraft?'分享計劃 · 試玩中':mode==='example'?'虛構示例，可替換':'你的本機計劃')+(activePlan()?' · 含未確認收入試算':'');
  $('simple-plan-note').textContent=state.billSource==='legacy'?'快速估算：帳單按月總額計。Bonus 同稅金只計已填項目。':'';
- $('result-label').textContent=activePlan()?'加埋試算，到時我會有 · '+state.currency:'到時我會有 · '+state.currency;
+ $('result-label').textContent=(activePlan()?'含試算 · ':'')+state.currency;
  $('reset-plan').hidden=!activePlan();const errors=[...G.validate(state),...G.validatePlan(plan)];$('status').textContent=errors.join(' ');
  if(errors.length){clearResult();persist();return;}
  base=G.forecast(state);result=G.forecast(state,plan);report=G.targetReport(state,result);trajectory=G.projectToGoal(state,plan);eta=trajectory.eta;
+ const paydayPlan=payday.render(state,plan,result);
  $('ending').textContent=amount(result.ending);$('goal-line').textContent=`到 ${monthText(state.endMonth)}，我要儲 ${money(G.cents(state.goal),0)}`;
  $('gap-label').textContent=report.shortfall?'仲差':report.surplus?'超出目標':'剛好達標';$('shortfall').textContent=money(report.shortfall||report.surplus);
  const percent=G.cents(state.goal)>0?Math.max(0,Math.min(100,result.ending/G.cents(state.goal)*100)):(result.ending>=0?100:0);
@@ -177,7 +179,7 @@ function render(){
  $('table-note').textContent=`${state.currency}，四捨五入至元；點月份睇分角。入儲蓄已先扣個人消費。`;
  $('timing-note').textContent=`水電煤按所選付款月扣整筆；差餉／保險仍按月預留。${monthText(state.startMonth)}先預留全期稅金。`;
  $('income-note').textContent=`原定期間 ${result.rows.length} 個月；圖表共 ${trajectory.rows.length} 個月。${result.excludedOneOffs?'有 '+result.excludedOneOffs+' 筆一次性收入喺原定期限之外，未計入目標月結餘；延伸預測只喺實際入帳月計入。':''}${plan.onceNet?'新增一次性淨收入放喺目標月。':''}`;
- $('dock-ending').textContent=money(result.ending);$('dock-gap').textContent=report.shortfall?'距離目標仲差 '+money(report.shortfall):'目標月份已足夠';$('dock-eta').textContent=eta.reached?monthText(eta.month):'預測期內未達標';
+ $('dock-monthly').textContent=money(paydayPlan.requiredMonthly);$('dock-gap').textContent='每月儲蓄目標'+(activePlan()?' · 含試算':'');$('dock-eta').textContent=eta.reached?monthText(eta.month):'預測期內未達標';
  renderChart();showMonth();visuals.render(state,result);$('visual-period').textContent=state.startMonth.replace('-','/')+' — '+state.endMonth.replace('-','/')+' · '+state.currency+' · 依輸入條件試算';persist();
 }
 function updateInput(input){

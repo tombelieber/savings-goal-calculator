@@ -29,8 +29,8 @@
    const current=steps[step];document.body.dataset.quickCompact=String(Boolean(current.optional)||current.key==='bills');$('quick-count').textContent=current.optional?'選填 1 / 1':`${step+1} / 6`;
    $('quick-progress').setAttribute('aria-valuemax',String(steps.length));$('quick-progress').setAttribute('aria-valuenow',String(step+1));$('quick-progress-fill').style.width=((step+1)/steps.length*100)+'%';
    $('quick-title').textContent=current.title;$('quick-help').textContent=current.help;
-   $('quick-back').hidden=step===0;$('quick-next').textContent=step===steps.length-1?'睇我嘅結果':current.optional?'繼續':'下一題';
-   $('quick-optional-skip').hidden=!current.optional;$('quick-optional-skip').textContent=extra.incomeUsed?'保留原本收入，睇結果':'略過，直接睇結果';
+   $('quick-back').hidden=step===0;$('quick-next').textContent=step===steps.length-1?'睇我嘅儲錢計劃':current.optional?'繼續':'下一題';
+   $('quick-optional-skip').hidden=!current.optional;$('quick-optional-skip').textContent=extra.incomeUsed?'保留原本收入，睇計劃':'略過，直接睇計劃';
    $('quick-zero').hidden=!current.zero;$('quick-zero').textContent=current.zero||'';
    $('quick-detail-note').textContent=step===5&&billMode==='total'?'按月總額估算，唔包括上一題日常使費。':'';
    if(snapshot&&step===3&&snapshot.state.incomeItems?.length>1)$('quick-detail-note').textContent='已帶入全部每月收入。改總額會取代原有收入拆項；想逐項改可以跳到完整工具。';
