@@ -7,7 +7,7 @@
     "test": "node --test model.test.cjs payday.test.cjs share.test.cjs export.test.cjs app.test.cjs privacy.test.cjs"
   },
   "devDependencies": {
-    "jsdom": "26.1.0"
+    "jsdom": "30.1.3"
   },
   "description": "A browser-local savings goal planner with offline use, dated bills and shareable scenarios.",
   "license": "MIT",
