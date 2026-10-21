@@ -31,6 +31,15 @@ link can also remain in browser history, clipboard history or a messaging servic
 Opening a shared link previews it. The receiving browser's existing saved plan
 is replaced only when its user chooses to keep that shared plan.
 
+## Copying a plan for AI
+
+“複製畀 AI” copies a text summary of your entered amounts, labels, payment
+schedules, unconfirmed trials and calculated monthly cash flow to the clipboard.
+If clipboard access is unavailable, a selected text field lets you copy manually.
+The app does not send the summary to an AI provider. Pasting it into another
+service shares it with that service under its own policies; clipboard history
+may also retain it. No AI account or API key is needed by this app.
+
 ## Local storage has limits
 
 Anyone with access to the browser profile, or software able to read that origin,

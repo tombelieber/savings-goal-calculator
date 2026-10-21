@@ -198,3 +198,25 @@ test('previous optional-cost drafts migrate directly to the bill breakdown and p
 test('invalid dated bills block the detailed method; switching to a valid total still finishes cleanly',()=>{
  const p=open({guided:true});basicFive(p);chooseBills(p,'detail');const water=addCost(p,'water',400);enter(p.dom,'qd-costs-'+water+'-nextMonth','');next(p);assert.match(p.d.getElementById('quick-error').textContent,/月份/);assert.equal(p.d.getElementById('quick-count').textContent,'6 / 6');chooseBills(p,'total');enter(p.dom,'quick-bills',8000);next(p);skipOptional(p);assert.equal(p.d.getElementById('ending').textContent,'214,000.00');p.dom.window.close();
 });
+
+test('one click copies the current AI summary without sharing or changing the saved plan',async()=>{
+ const p=open(),writes=[];Object.defineProperty(p.dom.window.navigator,'clipboard',{value:{writeText:async text=>writes.push(text)}});
+ enter(p.dom,'target',500000);enter(p.dom,'plan-monthly',123.45);const original=saved(p.dom);
+ p.d.getElementById('copy-ai').click();await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(writes.length,1);assert.match(writes[0],/目標：HKD 500,000.00/);assert.match(writes[0],/每月額外淨收入：HKD 123.45/);
+ assert.match(p.d.getElementById('ai-copy-status').textContent,/已複製/);assert.equal(p.d.getElementById('ai-copy-panel').hidden,true);assert.equal(p.d.getElementById('share-panel').hidden,true);assert.deepEqual(saved(p.dom),original);
+ enter(p.dom,'spendingMonthly',7000);p.d.getElementById('copy-ai').click();await new Promise(resolve=>setImmediate(resolve));assert.match(writes[1],/日常使費（不含下面帳單及稅金）：HKD 7,000.00/);p.dom.window.close();
+});
+test('denied clipboard exposes a selected readonly summary; edits dismiss stale output and invalid inputs cannot copy',async()=>{
+ const p=open();Object.defineProperty(p.dom.window.navigator,'clipboard',{value:{writeText:async()=>{throw new Error('denied');}}});
+ p.d.getElementById('copy-ai').click();await new Promise(resolve=>setImmediate(resolve));const field=p.d.getElementById('ai-plan-text');
+ assert.equal(p.d.getElementById('ai-copy-panel').hidden,false);assert.equal(field.readOnly,true);assert.equal(field.selectionStart,0);assert.equal(field.selectionEnd,field.value.length);assert.match(p.d.getElementById('ai-copy-status').textContent,/長按/);
+ p.d.getElementById('close-ai-copy').click();assert.equal(p.d.activeElement.id,'copy-ai');
+ p.d.getElementById('copy-ai').click();await new Promise(resolve=>setImmediate(resolve));enter(p.dom,'taxTotal','');assert.equal(p.d.getElementById('ai-copy-panel').hidden,true);
+ p.d.getElementById('copy-ai').click();assert.match(p.d.getElementById('ai-copy-status').textContent,/填齊/);p.dom.window.close();
+});
+test('AI copy works on restored shared plans without replacing receiver storage, including absent clipboard API',async()=>{
+ const original={state:fixture(),plan:{monthlyNet:0,onceNet:0}},incoming=fixture();incoming.goal=765432.10;
+ const p=open({saved:original,url:S.url(incoming,{onceNet:999.99},'https://example.test/')});p.d.getElementById('copy-ai').click();await new Promise(resolve=>setImmediate(resolve));
+ assert.match(p.d.getElementById('ai-plan-text').value,/目標：HKD 765,432.10/);assert.match(p.d.getElementById('ai-plan-text').value,/目標月額外一次性淨收入：HKD 999.99/);assert.deepEqual(saved(p.dom),original);p.dom.window.close();
+});

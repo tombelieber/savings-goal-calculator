@@ -49,3 +49,9 @@
 開發及自架方法見 [英文 README](README.md#run-it-yourself)、[貢獻指引](CONTRIBUTING.md) 同 [Cloudflare 部署](docs/deployment.md)。報 bug、截圖、PR 請只用虛構數據；安全問題見 [SECURITY.md](SECURITY.md)。
 
 由 [Tom Tang](https://github.com/tombelieber) 製作，採用 [MIT License](LICENSE)。
+
+## 複製畀 AI
+
+喺結果頁按「複製畀 AI」，就可以將目標、收支、付款安排、逐月現金流同試算結果貼去 ChatGPT 或其他 AI 討論。摘要會標示未確認額外收入同估算。瀏覽器唔畀直接複製時，會顯示可手動複製嘅摘要。
+
+「分享計劃」會產生可還原計劃嘅連結。摘要同連結都包含已填金額及名稱；只喺你自行貼上或傳送時分享。
