@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='bcc3fb9507b9',CACHE='saving-plan-'+VERSION;
+const VERSION='bae89fd0ed9c',CACHE='saving-plan-'+VERSION;
 const FILES=['./','./offline.zip','./manifest.webmanifest','./icon.svg'];
 const paths=new Set(FILES.map(path=>new URL(path,self.registration.scope).pathname));
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting()));});
