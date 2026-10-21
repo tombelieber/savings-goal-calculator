@@ -41,6 +41,7 @@ Prefer one page? **Jump to the full tool** at any time.
 | When will I actually get there? | A savings line that continues to the estimated goal date, up to ten years. |
 | What if I spend less or earn more? | Sliders update the result and monthly cash flow immediately. |
 | What about a Bonus or irregular bills? | Dated one-off income and utility payments in their selected months. |
+| Can I discuss my plan with AI? | Copy a readable summary of inputs, monthly cash flow and results, then paste it into your AI tool. |
 | Can I show someone my plan? | A share link they can open and adjust without replacing their saved plan. |
 
 ## Your numbers stay with you

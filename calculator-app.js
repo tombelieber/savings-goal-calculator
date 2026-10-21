@@ -150,6 +150,7 @@ function clearResult(){
  $('gap-label').textContent='仲差';$('dock-gap').textContent='填入條件開始試算';$('progress-fill').style.width='0%';$('progress').setAttribute('aria-valuenow','0');
 }
 function render(){
+ $('ai-copy-panel').hidden=true;$('ai-copy-status').textContent='';
  $('shared-plan-banner').hidden=!sharedDraft;
  syncControls();$('example-status').textContent=(sharedDraft?'分享計劃 · 試玩中':mode==='example'?'虛構示例，可替換':'你的本機計劃')+(activePlan()?' · 含未確認收入試算':'');
  $('simple-plan-note').textContent=state.billSource==='legacy'?'快速估算：帳單按月總額計。Bonus 同稅金只計已填項目。':'';
@@ -220,6 +221,8 @@ document.addEventListener('click',event=>{
  if(button.dataset.goal){state.goal=Number(button.dataset.goal);mode='custom';render();return;}
  if(button.id==='keep-shared-plan'){releaseInputFocus();sharedDraft=false;history.replaceState(null,'',location.pathname+'#goal');render();return;}
  if(button.id==='restore-local-plan'){releaseInputFocus();sharedDraft=false;state=C.initialise(I.initialise(B.setExample(G.example())));plan={monthlyNet:0,onceNet:0};ranges={};mode='example';try{if(savedBeforeShared){localStorage.setItem(storageKey,savedBeforeShared);readSaved();}else localStorage.removeItem(storageKey);}catch{}history.replaceState(null,'',location.pathname+'#goal');render();return;}
+ if(button.id==='copy-ai'){copyForAI();return;}
+ if(button.id==='close-ai-copy'){$('ai-copy-panel').hidden=true;$('copy-ai').focus();return;}
  if(button.id==='share-plan'){openShare();return;}
  if(button.id==='copy-share'){copyShare();return;}
  if(button.id==='close-share'){ $('share-panel').hidden=true;return;}
@@ -255,4 +258,13 @@ function openShare(){
 async function copyShare(){
  try{await navigator.clipboard.writeText($('share-link').value);$('share-copy-status').textContent='連結已複製。';}
  catch{$('share-link').focus();$('share-link').select();$('share-copy-status').textContent='請長按或用複製快捷鍵，複製已選取嘅連結。';}
+}
+
+async function copyForAI(){
+ let text;
+ try{text=PlannerExport.text(state,plan);}
+ catch{$('ai-copy-status').textContent='填齊有效金額同月份，先可以複製計劃畀 AI。';return;}
+ const field=$('ai-plan-text');field.value=text;$('ai-copy-panel').hidden=true;
+ try{await navigator.clipboard.writeText(text);$('ai-copy-status').textContent='計劃已複製，可以貼去 ChatGPT 或其他 AI 討論。';}
+ catch{$('ai-copy-panel').hidden=false;field.focus();field.select();$('ai-copy-status').textContent='請長按或用複製快捷鍵，複製已選取嘅摘要，再貼去 AI。';}
 }
